@@ -3,13 +3,17 @@ import { AbstractController } from "./IController";
 import { NextFunction, Request, Response } from "express";
 import QRCode from 'qrcode';
 import fs from 'fs';
+import httpStatus from "http-status";
+import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
 
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
   private createUseCase;
+  private uploadCertificateUseCase;
 
-  constructor(createUseCase: ICreateCertificateUseCase) {
+  constructor(createUseCase: ICreateCertificateUseCase, uploadCertificateUseCase: IUploadCertificateUseCase) {
     this.createUseCase = createUseCase;
+    this.uploadCertificateUseCase = uploadCertificateUseCase;
   }
 
   run = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -44,7 +48,7 @@ export default class CreateController implements AbstractController {
       practicalStartDate: '30-11-2023',
       practicalEndtDate: '30-11-2023',
       theoreticalFacilitator: 'TATIANA JORQUERA OLIVARES',
-      practicalFacilitator: 'JULIO BERNARDO GONZáLEZ COLLAO',
+      practicalFacilitator: 'JULIO BERNARDO GONZÁLEZ COLLAO',
       day: 9,
       month: 'Febrero',
       year: 2024,
@@ -56,17 +60,15 @@ export default class CreateController implements AbstractController {
     };
 
     try{
+      const fileName = `${data.companyLegalName}/${data.candidateName}/${data.code}-${data.courseCode}-${Date.now()}.pdf`;
       const pdfBytes = await this.createUseCase.pdf(data);
-      const buffer = Buffer.from(pdfBytes);
-        
-      // Configura los encabezados para la descarga del archivo
-      res.setHeader('Content-Type', 'application/pdf');
-      // res.setHeader('Content-Disposition', 'attachment; filename=nombre-del-archivo.pdf'); //TO DOWNLOAD
-      res.setHeader('Content-Disposition', 'inline; filename=nombre-del-archivo.pdf');
+      const response = await this.uploadCertificateUseCase.upload(pdfBytes, fileName);
 
-      res.status(200);
-      res.send(buffer);
-      
+      if (response.url !== '') {
+        res.status(httpStatus.OK).json(response.url);
+      }
+
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json();
     } catch(error: any) {
       error.method = this.methodName;
       next(error);

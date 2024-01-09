@@ -19,17 +19,11 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
     const browser = await puppeteer.launch({ headless: "new", args: ['--enable-local-file-accesses'] });
     const page = await browser.newPage();
 
-
-    // Establece el contenido HTML de la página
     await page.setContent(html);
-
-    // Genera el PDF
     const pdfBuffer = await page.pdf({ format: 'Legal' });
-
     // Cierra el navegador
     await browser.close();
     return pdfBuffer;
-
   }
 }
 
