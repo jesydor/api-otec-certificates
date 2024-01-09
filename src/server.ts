@@ -6,7 +6,6 @@ import routes from './interfaces/routes';
 const app = express();
 const port = 3000;
 
-// Middleware para usar el enrutador
 app.use('/', routes);
 
 app.listen(port, () => {

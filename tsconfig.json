@@ -9,7 +9,7 @@
       "outDir": "./dist",
       "typeRoots": [
         "node_modules/@types"
-      ],
+      ]
     },
   "include": [
     "typings.d.ts",

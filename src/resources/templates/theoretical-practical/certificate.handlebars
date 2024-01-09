@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        .verticalText {
+            text-align: center;
+            vertical-align: middle;
+            width: 20px;
+            margin: 0;
+            padding: 0;
+            padding-left: 3px;
+            padding-right: 3px;
+            padding-top: 10px;
+            white-space: nowrap;
+            transform: rotate(-90deg);
+        }
+    </style>
+</head>
+<body>
+    <div style="position: absolute; top: 1.885in; left: 0.083in; width: 8.396in; height: 7.927in; border: none;">
+        <span>
+            <img src="data:image/png;base64,{{ watermark }}" width="806" height="760">
+        </span>
+    </div>
+    <div style="position: absolute; top: 9.5in; left: 6.323in; width: 1.76in; height: 1.76in; z-index: 1;">
+        <img src="'.$filename.'">
+    </div>
+    <div style="position: absolute; top: 11.312in; left: 6.271in; width: 1.854in; line-height: 0.17in; height: 18px;">
+        <span style="font-style:normal;font-weight:normal;font-size:11pt;font-family:Calibri;color:#000000">
+            Verificación de Certificado
+        </span>
+        <br>
+    </div>
+    <div style="position: absolute; top: 0.302in; left: 3.469in; width: 2.188in; height: 1.875in; z-index: 1;">
+        <img src="data:image/png;base64,{{ logo-header }}">
+    </div>
+    <div style="position: absolute; top: 853px; left: 2.083in; z-index: 1; width: 383px; height: 234px;">
+        <img src="data:image/png;base64,{{ doris-carreno-sign }}">
+    </div>
+    <div style="position: absolute; top: 0.781in; left: 5.875in; width: 2.062in; line-height: 0.17in; z-index: 1;">
+        <span style="font-style:normal;font-weight:normal;font-size:13pt;font-family:Calibri;color:#000000">Serie: OTEC JD-0{{ code }}</span>
+        <br>
+    </div>
+    <!--fin cabecera-->
+    <div style="position: absolute; z-index: 1; left: 44px; top: 135px; width: 753px;">
+        <table width="742" height="86" border="0" align="">
+            <tbody>
+                <tr>
+                    <td>
+                        <center>
+                            <font style="font-size:16pt;font-family:Calibri;font-family:Baskerville Old Face;font-style:normal;font-weight:normal;">
+                                <b>'.$acredita3.'</b>
+                            </font>
+                            <br>
+                            <br>
+                            <b>CERTIFICADO DE ASISTENCIA Y APROBACION</b>
+                            <br>
+                            <br>
+                            <font style="font-size:12pt;font-family:Calibri;font-family:Baskerville Old Face;font-style:normal;font-weight:normal;">
+                                Sociedad de Capacitacion Jes & Dor Ltda Rut 77.649.050-4, extiende a la empresa:
+                                <br>
+                            </font>
+                        </center>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="position: absolute; z-index: 1; left: 81px; top: 309px;">
+        <p>Certificado Asistencia del siguiente curso:</p>
+        <table width="639" height="86" border="0" align="">
+            <tbody>
+                <tr>
+                    <td width="229"><b>Nombre Curso</b></td>
+                    <td width="21"><b>:</b></td>
+                    <td width="367">{{ courseName }}</td>
+                </tr>
+                <tr>
+                    <td><b>Código Curso</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ courseCode }}</td>
+                </tr>
+                <tr>
+                    <td><b>N° de Horas</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ courseNumberHours }}</td>
+                </tr>
+                <tr>
+                    <td><b>Vigencia</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ validityCourse }} Años</td>
+                </tr>
+                <tr>
+                    <td><b>Fecha Inicio Teorico</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ theoreticalStartDate }}</td>
+                </tr>
+                <tr>
+                    <td><b>Fecha Termino Teorico</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ theoreticalEndDate }}</td>
+                </tr>
+                <tr>
+                    <td><b>Fecha Inicio Practico</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ practicalStartDate }}</td>
+                </tr>
+                <tr>
+                    <td><b>Fecha Termino Practico</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ practicalStartDate }}</td>
+                </tr>
+                <tr>
+                    <td><b>Nombre Facilitador Teorico</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ theoreticalFacilitator }}</td>
+                </tr>
+                <tr>
+                    <td><b>Nombre Facilitador Practico</b></td>
+                    <td><b>:</b></td>
+                    <td>{{ practicalFacilitator }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="position: absolute; z-index: 1; left: 83px; top: 706px; width: 706px;">
+        <table border="0" align="">
+            <tbody>
+                <tr>
+                    <td>
+                        <font size="">
+                            Yo, Doris Carreño Rut 11.273.855-k Directora de Otec Sociedad de Capacitación Jes & Dor Ltda.
+                            <br>
+                            Certifico que los datos consignados en el presente Certificado son fidedignos
+                        </font>.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table border="0" align="">
+            <tbody>
+                <tr>
+                    <td>
+                        <font size=""><b>Rancagua, {{ day }} de  {{ month  }}  {{ fechatermino4 }}</b></font>.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="position: absolute; z-index: 1; left: 78px; top: 606px;">
+        <table width="639" height="86" border="1" align="justify">
+            <tbody>
+                <tr>
+                    <td width="330"><b>NOMBRE DEL PARTICIPANTE</b></td>
+                    <td width="134"><b><center>RUT</center></b></td>
+                    <td width="153"><b><center>ESTADO</center></b></td>
+                </tr>
+                <tr>
+                    <td>{{ candidateName }}</td>
+                    <td><center>{{ candidateRut }}</center></td>
+                    <td><center>{{ status }}</center></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="position: absolute; z-index: 1; left: 82px; top: 267px;">
+        <table width="639" height="86" border="1" align="left">
+            <tbody>
+                <tr>
+                    <td width="330"><b>Razon Social</b></td>
+                    <td width="134" align="center"><b><center>RUT</center></b></td>
+                </tr>
+                <tr>
+                    <td>{{ companyLegalName }}</td>
+                    <td align="center">{{ companyRut }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
