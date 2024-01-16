@@ -1,29 +1,46 @@
 import { ICreateCertificateUseCase } from '../ports/ICreateCertificateUseCase';
 import PdfGenerationService from '../services/PdfGenerationService';
 import puppeteer from 'puppeteer';
-import handlebars from 'handlebars';
 import fs from 'fs/promises';
+import { CreateResponse } from '../../domain/entities/CreateResponse';
+import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
+import { IDocumentRepository } from '../ports/IDocumentRepository';
+import { DocumentInfo } from '../../domain/entities/DocumentInfo';
 
 export default class CreateCertificateUseCase implements ICreateCertificateUseCase {
   private pdfGenerationService: PdfGenerationService;
+  private certificateRepository: IFileStorageRepository;
+  private documentsRepository: IDocumentRepository;
 
-  constructor(pdfGenerationService: PdfGenerationService) {
+  constructor(pdfGenerationService: PdfGenerationService, certificateRepository: IFileStorageRepository, documentsRepository: IDocumentRepository)  {
     this.pdfGenerationService = pdfGenerationService;
+    this.certificateRepository = certificateRepository;
+    this.documentsRepository = documentsRepository;
   }
 
-  async pdf(data: Object): Promise<Buffer> {
+  async pdf(data: Object, fileName: string): Promise<CreateResponse> {
     const htmlTemplate = await fs.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
-    const template = handlebars.compile(htmlTemplate);
-    const html = template(data);
+    const bucketName = 'otec-certificates';
+    const pdfBuffer = await this.pdfGenerationService.generatePdf(htmlTemplate, data);
+    const response = await this.certificateRepository.upload(pdfBuffer, fileName, bucketName);
+    if (response.error !== '') {
+      return {
+        data: '',
+        error: response.error,
+      }; 
+    }
 
-    const browser = await puppeteer.launch({ headless: "new", args: ['--enable-local-file-accesses'] });
-    const page = await browser.newPage();
+    const documentInfo: DocumentInfo = {
+      code: 0,
+      url: ''
+    };
+    
+    const res = this.documentsRepository.save(documentInfo);
 
-    await page.setContent(html);
-    const pdfBuffer = await page.pdf({ format: 'Legal' });
-    // Cierra el navegador
-    await browser.close();
-    return pdfBuffer;
+    return {
+      data: response.url,
+      error: response.error,
+    }; 
   }
 }
 

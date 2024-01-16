@@ -9,11 +9,9 @@ import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertif
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
   private createUseCase;
-  private uploadCertificateUseCase;
 
   constructor(createUseCase: ICreateCertificateUseCase, uploadCertificateUseCase: IUploadCertificateUseCase) {
     this.createUseCase = createUseCase;
-    this.uploadCertificateUseCase = uploadCertificateUseCase;
   }
 
   run = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -30,7 +28,6 @@ export default class CreateController implements AbstractController {
     const gifBytes = await QRCode.toBuffer(qrCodeUrl, {
       errorCorrectionLevel: 'H'
     });
-
 
     const data = {
       code: '103871',
@@ -60,12 +57,11 @@ export default class CreateController implements AbstractController {
     };
 
     try{
-      const fileName = `${data.companyLegalName}/${data.candidateName}/${data.code}-${data.courseCode}-${Date.now()}.pdf`;
-      const pdfBytes = await this.createUseCase.pdf(data);
-      const response = await this.uploadCertificateUseCase.upload(pdfBytes, fileName);
+      const fileName = `${data.companyLegalName}/${data.candidateName.replace(/ /g,"-")}/${data.code}-${data.courseCode}-${Date.now()}.pdf`;
+      const response = await this.createUseCase.pdf(data, fileName);
 
-      if (response.url !== '') {
-        res.status(httpStatus.OK).json(response.url);
+      if (response.data !== '') {
+        res.status(httpStatus.OK).json(response.data);
       }
 
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json();

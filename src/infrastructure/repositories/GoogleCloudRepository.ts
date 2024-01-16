@@ -1,11 +1,10 @@
 import { UploadFile } from "../../domain/entities/UploadFile";
-import IGoogleCloudRepository from "../../domain/ports/IGoogleCloudRepository";
+import IFileStorageRepository from "../../domain/ports/IFileStorageRepository";
 import { Storage } from '@google-cloud/storage';
 
-export default class GoogleCloudRepository implements IGoogleCloudRepository {
-    async upload(certificate: Buffer, fileName: string): Promise<UploadFile> {
+export default class GoogleCloudRepository implements IFileStorageRepository {
+    async upload(certificate: Buffer, fileName: string, bucketName: string): Promise<UploadFile> {
         const storage = new Storage({ keyFilename: '/Users/zae/.config/gcloud/application_default_credentials.json' });
-        const bucketName = 'otec-certificates';
         const response = {
             url: '',
             error: '',
@@ -24,16 +23,10 @@ export default class GoogleCloudRepository implements IGoogleCloudRepository {
           
             response.url = `https://storage.googleapis.com/${bucketName}/${fileName}`;
           } catch (error) {
-            response.error = 'Error al subir el archivo:' + error;
-            console.error(response.error );
+            response.error = 'Error uploading file:' + error;
+            console.error(response.error);
           }
 
           return response;
     }
-
-
-    get(certificateId: string, withReport: boolean): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
 }

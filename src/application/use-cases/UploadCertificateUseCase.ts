@@ -1,16 +1,18 @@
 import { IUploadCertificateUseCase } from '../ports/IUploadCertificateUseCase';
-import ICertificateRepository from '../../domain/ports/IGoogleCloudRepository';
+import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
 import { UploadFile } from '../../domain/entities/UploadFile';
 
 export default class UploadCertificateUseCase implements IUploadCertificateUseCase {
-  private certificateRepository: ICertificateRepository;
+  private fileStorageRepository: IFileStorageRepository;
 
-  constructor(certificateRepository: ICertificateRepository) {
-    this.certificateRepository = certificateRepository;
+  constructor(fileStorageRepository: IFileStorageRepository) {
+    this.fileStorageRepository = fileStorageRepository;
   }
 
   upload(certificate: Buffer, fileName: string): Promise<UploadFile> {
-    return this.certificateRepository.upload(certificate, fileName);
+    // TODO change by env var
+    const bucketName = 'otec-certificates';
+    return this.fileStorageRepository.upload(certificate, fileName, bucketName);
   }
 }
 

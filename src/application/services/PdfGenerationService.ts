@@ -1,22 +1,19 @@
+import handlebars from 'handlebars';
 import fs from 'fs';
+import puppeteer from 'puppeteer';
 
 class PdfGenerationService {
-  async generatePdf(htmlContent: string) {
-    
-  }
+  async generatePdf(htmlTemplate: string, data: Object): Promise<Buffer> {
+    const template = handlebars.compile(htmlTemplate);
+    const html = template(data);
 
-  readImage(imgPath: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      fs.readFile(imgPath, (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+    const browser = await puppeteer.launch({ headless: "new", args: ['--enable-local-file-accesses'] });
+    const page = await browser.newPage();
 
-        const base64String = Buffer.from(data).toString('base64');
-        resolve(base64String);
-      });
-    });
+    await page.setContent(html);
+    await browser.close();
+
+    return page.pdf({ format: 'Legal' });
   }
 }
 
