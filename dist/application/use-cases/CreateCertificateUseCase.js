@@ -8,15 +8,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const promises_1 = __importDefault(require("fs/promises"));
 class CreateCertificateUseCase {
-    constructor(pdfGenerationService) {
+    constructor(pdfGenerationService, certificateRepository, documentsRepository) {
         this.pdfGenerationService = pdfGenerationService;
+        this.certificateRepository = certificateRepository;
+        this.documentsRepository = documentsRepository;
     }
-    pdf(data) {
+    pdf(data, fileName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const pdfBytes = yield this.pdfGenerationService.generatePdf("");
-            return pdfBytes;
+            const htmlTemplate = yield promises_1.default.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
+            const bucketName = 'otec-certificates';
+            const pdfBuffer = yield this.pdfGenerationService.generatePdf(htmlTemplate, data);
+            const response = yield this.certificateRepository.upload(pdfBuffer, fileName, bucketName);
+            if (response.error !== '') {
+                return {
+                    data: '',
+                    error: response.error,
+                };
+            }
+            const documentInfo = {
+                code: data.code,
+                companyRut: data.companyRut,
+                candidateRut: data.candidateRut,
+                url: response.url,
+            };
+            const res = this.documentsRepository.save(documentInfo);
+            return {
+                data: response.url,
+                error: response.error,
+            };
         });
     }
 }

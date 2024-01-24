@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import fs from 'fs';
 import httpStatus from "http-status";
 import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
+import { Certificate } from "../../domain/entities/Certificate";
 
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
@@ -29,8 +30,8 @@ export default class CreateController implements AbstractController {
       errorCorrectionLevel: 'H'
     });
 
-    const data = {
-      code: '103871',
+    const data: Certificate = {
+      code: '103871-2',
       'sign': dorisCarrenoSignBase64,
       'logo-header': logoBase64,
       'watermark': waterMarkBase64,
@@ -43,7 +44,7 @@ export default class CreateController implements AbstractController {
       theoreticalStartDate: '09-11-2023',
       theoreticalEndDate: '09-11-2023',
       practicalStartDate: '30-11-2023',
-      practicalEndtDate: '30-11-2023',
+      practicalEndDate: '30-11-2023',
       theoreticalFacilitator: 'TATIANA JORQUERA OLIVARES',
       practicalFacilitator: 'JULIO BERNARDO GONZÁLEZ COLLAO',
       day: 9,
@@ -60,8 +61,8 @@ export default class CreateController implements AbstractController {
       const fileName = `${data.companyLegalName}/${data.candidateName.replace(/ /g,"-")}/${data.code}-${data.courseCode}-${Date.now()}.pdf`;
       const response = await this.createUseCase.pdf(data, fileName);
 
-      if (response.data !== '') {
-        res.status(httpStatus.OK).json(response.data);
+      if (response.error === '') {
+        res.status(httpStatus.OK).json(response.certificate);
       }
 
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json();

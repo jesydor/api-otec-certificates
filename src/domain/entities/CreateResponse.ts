@@ -1,4 +1,6 @@
+import { Certificate } from "./GetResponse"
+
 export interface CreateResponse {
-  data: string
+  certificate: Certificate
   error: string
 }

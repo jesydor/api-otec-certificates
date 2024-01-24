@@ -8,24 +8,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const handlebars_1 = __importDefault(require("handlebars"));
-const puppeteer_1 = __importDefault(require("puppeteer"));
-class PdfGenerationService {
-    generatePdf(htmlTemplate, data) {
+exports.PostgreSQLDatabase = void 0;
+const pg_1 = require("pg");
+class PostgreSQLDatabase {
+    constructor() {
+        this.pool = new pg_1.Pool({
+            user: process.env.PGUSER,
+            host: process.env.PGHOST,
+            database: process.env.PGDATABASE,
+            password: process.env.PGPASSWORD,
+            port: parseInt(process.env.PGPORT || '5432'),
+        });
+    }
+    static getInstance() {
+        if (!PostgreSQLDatabase.instance) {
+            PostgreSQLDatabase.instance = new PostgreSQLDatabase();
+        }
+        return PostgreSQLDatabase.instance;
+    }
+    getClient() {
         return __awaiter(this, void 0, void 0, function* () {
-            const template = handlebars_1.default.compile(htmlTemplate);
-            const html = template(data);
-            const browser = yield puppeteer_1.default.launch({ headless: "new", args: ['--enable-local-file-accesses', '--no-sandbox'] });
-            const page = yield browser.newPage();
-            yield page.setContent(html);
-            const pdf = yield page.pdf({ format: 'Legal' });
-            yield browser.close();
-            return pdf;
+            return this.pool.connect();
+        });
+    }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.pool.end();
         });
     }
 }
-exports.default = PdfGenerationService;
+exports.PostgreSQLDatabase = PostgreSQLDatabase;

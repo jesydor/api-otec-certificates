@@ -4,8 +4,9 @@ import puppeteer from 'puppeteer';
 import fs from 'fs/promises';
 import { CreateResponse } from '../../domain/entities/CreateResponse';
 import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
-import { IDocumentRepository } from '../ports/IDocumentRepository';
+import { IDocumentRepository } from '../../domain/ports/IDocumentRepository';
 import { DocumentInfo } from '../../domain/entities/DocumentInfo';
+import { Certificate } from '../../domain/entities/GetResponse';
 
 export default class CreateCertificateUseCase implements ICreateCertificateUseCase {
   private pdfGenerationService: PdfGenerationService;
@@ -18,28 +19,39 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
     this.documentsRepository = documentsRepository;
   }
 
-  async pdf(data: Object, fileName: string): Promise<CreateResponse> {
+  async pdf(data: Certificate, fileName: string): Promise<CreateResponse> {
+    const certificate :Certificate = {
+        code: '',
+        candidateRut: '',
+        companyRut: ''
+      };
+
     const htmlTemplate = await fs.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
     const bucketName = 'otec-certificates';
     const pdfBuffer = await this.pdfGenerationService.generatePdf(htmlTemplate, data);
     const response = await this.certificateRepository.upload(pdfBuffer, fileName, bucketName);
     if (response.error !== '') {
       return {
-        data: '',
+        certificate,
         error: response.error,
       }; 
     }
 
     const documentInfo: DocumentInfo = {
-      code: 0,
-      url: ''
+      code: data.code,
+      companyRut: data.companyRut,
+      candidateRut: data.candidateRut,
+      url: response.url,
     };
     
-    const res = this.documentsRepository.save(documentInfo);
+    const res = await this.documentsRepository.save(documentInfo);
+    certificate.code = res.code;
+    certificate.candidateRut = res.candidateRut;
+    certificate.companyRut = res.companyRut;
 
     return {
-      data: response.url,
-      error: response.error,
+      certificate,
+      error: '',
     }; 
   }
 }

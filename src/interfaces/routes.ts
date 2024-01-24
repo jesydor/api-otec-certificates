@@ -3,9 +3,9 @@ import express from 'express';
 import CreateCertificateUseCase from '../application/use-cases/CreateCertificateUseCase';
 import PdfGenerationService from '../application/services/PdfGenerationService';
 import UploadCertificateUseCase from '../application/use-cases/UploadCertificateUseCase';
-import CreateController from './controllers/CreateController';
 import PgRepository from '../infrastructure/repositories/PgRepository';
 import GoogleCloudRepository from '../infrastructure/repositories/GoogleCloudRepository';
+import CreateController from './controllers/createController';
 
 const router = express.Router();
 
@@ -18,6 +18,6 @@ const createUseCase = new CreateCertificateUseCase(pdfGenerationService, fileSto
 
 const uploadCertificateUseCase = new UploadCertificateUseCase(fileStorageRepository);
 const createController = new CreateController(createUseCase, uploadCertificateUseCase);
-router.post('/', createController.run);
+router.get('/', createController.run);
 
 export default router;
