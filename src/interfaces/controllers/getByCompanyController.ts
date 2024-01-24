@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 
 import { IGetCertificateUseCase } from "../../application/ports/IGetCertificateUseCase";
-import { getPagination } from "../mappers";
+import { getPagination } from "../gateways/mappers";
 import { Pagination } from "../../domain/entities/Pagination";
 
 export default class GetByCompanyController implements AbstractController {

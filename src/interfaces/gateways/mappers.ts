@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Pagination } from '../domain/entities/Pagination';
+import { Pagination } from '../../domain/entities/Pagination';
 
 export async function getPagination(request: Request): Promise<Pagination> {
     const queryParams = request.query;

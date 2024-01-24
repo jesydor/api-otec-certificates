@@ -6,6 +6,7 @@ import fs from 'fs';
 import httpStatus from "http-status";
 import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
 import { Certificate } from "./request/Certificate";
+import CertificateValidator from "./validator/certificateValidator";
 
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
@@ -30,37 +31,41 @@ export default class CreateController implements AbstractController {
       errorCorrectionLevel: 'H'
     });
 
-    const data: Certificate = {
-      code: '103871-2',
-      'sign': dorisCarrenoSignBase64,
-      'logo-header': logoBase64,
-      'watermark': waterMarkBase64,
-      companyRut: '59.069.860-1',
-      companyLegalName: 'ACCIONA CONSTRUCCION S.A',
-      courseName: 'TRABAJO EN ALTURA FÍSICA TEÓRICO - PRACTICO',
-      courseCode: 'CTP8-TA',
-      courseNumberHours: 8,
-      validityCourse: 4, 
-      theoreticalStartDate: '09-11-2023',
-      theoreticalEndDate: '09-11-2023',
-      practicalStartDate: '30-11-2023',
-      practicalEndDate: '30-11-2023',
-      theoreticalFacilitator: 'TATIANA JORQUERA OLIVARES',
-      practicalFacilitator: 'JULIO BERNARDO GONZÁLEZ COLLAO',
-      day: 9,
-      month: 'Febrero',
-      year: 2024,
-      candidateName: 'LEONARDO ANDRES LEIVA DIAZ ',
-      candidateRut: '13.505.775-4 ',
-      status: 'Aprobado Nota:100',
-      approveDate: '25 de Agosto 2023',
-      qr: gifBytes.toString('base64')
-    };
-
     try{
-      const fileName = `${data.companyLegalName}/${data.candidateName.replace(/ /g,"-")}/${data.code}-${data.courseCode}-${Date.now()}.pdf`;
-      const response = await this.createUseCase.pdf(data, fileName);
+      const certificate: Certificate = {
+        code: req.body.code,
+        'sign': dorisCarrenoSignBase64,
+        'logo-header': logoBase64,
+        'watermark': waterMarkBase64,
+        companyRut: req.body.companyRut,
+        companyLegalName: req.body.companyLegalName,
+        courseName: req.body.courseName,
+        courseCode: req.body.courseCode,
+        courseNumberHours: req.body.courseNumberHours,
+        validityCourse: req.body.validityCourse,
+        theoreticalStartDate: req.body.theoreticalStartDate,
+        theoreticalEndDate: req.body.theoreticalEndDate,
+        practicalStartDate: req.body.practicalStartDate,
+        practicalEndDate: req.body.practicalEndDate,
+        theoreticalFacilitator: req.body.theoreticalFacilitator,
+        practicalFacilitator: req.body.practicalFacilitator,
+        day: req.body.day,
+        month: req.body.month,
+        year: req.body.year,
+        candidateName: req.body.candidateName,
+        candidateRut: req.body.candidateRut,
+        status: req.body.status,
+        approveDate: req.body.approveDate,
+        qr: gifBytes.toString('base64')
+      };
 
+      const errors = CertificateValidator.validate(certificate);
+      if (errors.length) {
+        res.status(httpStatus.BAD_REQUEST).json(errors);
+      }
+
+      const fileName = `${certificate.companyLegalName}/${certificate.candidateName.replace(/ /g,"-")}/${certificate.code}-${certificate.courseCode}-${Date.now()}.pdf`;
+      const response = await this.createUseCase.pdf(certificate, fileName);
       if (response.error === '') {
         res.status(httpStatus.CREATED).json(response.certificate);
       }

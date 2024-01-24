@@ -3,6 +3,7 @@ import { PostgreSQLDatabase } from "../../common/database/postgres/connection";
 import { DocumentInfo } from "../../domain/entities/DocumentInfo";
 import { Pagination } from "../../domain/entities/Pagination";
 import { QueryResult } from 'pg';
+import { modeltoDocumentInfo } from "./adapters/documentModelToDocumentInfo";
 
 export default class PgRepository implements IDocumentRepository {
     async getByCompanyRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
@@ -10,17 +11,10 @@ export default class PgRepository implements IDocumentRepository {
         const response :DocumentInfo[] = [];
         try {
             const query = `SELECT * FROM documents.documents WHERE companyrut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
-            console.log(`SELECT * FROM documents.documents WHERE companyrut = ${rut} AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ${pagination.limit} OFFSET ${pagination.offset};`);
             const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
 
-            result.rows.forEach(document => {
-                    response.push({
-                        code: document?.code,
-                        candidateRut: document?.candidaterut,
-                        companyRut: document?.companyrut,
-                        url: document?.url
-                    }
-                );
+            result.rows.forEach(async document => {
+                    response.push(await modeltoDocumentInfo(document));
             });
             return response; 
         } catch (error) {
@@ -36,17 +30,11 @@ export default class PgRepository implements IDocumentRepository {
         try {
             const query = `SELECT * FROM documents.documents WHERE candidateRut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
             const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
-
-            console.log(query);
-            result.rows.forEach(document => {
-                    response.push({
-                        code: document?.code,
-                        candidateRut: document?.candidaterut,
-                        companyRut: document?.companyrut,
-                        url: document?.url
-                    }
-                );
+            
+            result.rows.forEach(async document => {
+                    response.push(await modeltoDocumentInfo(document));
             });
+
             return response; 
         } catch (error) {
             console.error('Error querying documents:', error);
@@ -58,26 +46,10 @@ export default class PgRepository implements IDocumentRepository {
 
     async getByCode(code: string): Promise<DocumentInfo> {
         const client = await PostgreSQLDatabase.getInstance().getClient();
-        const response :DocumentInfo = {
-            code: "",
-            candidateRut: "",
-            companyRut: "",
-            url: ""
-        };
-
         try {
             const query = `SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;`;
             const result: QueryResult<any> = await client.query(query, [code]);
-            if (result.rowCount) {
-                response.code = result.rows[0]?.code;
-                response.candidateRut = result.rows[0]?.candidaterut;
-                response.companyRut = result.rows[0]?.companyrut;
-                response.url = result.rows[0]?.url;
-
-                return response;
-            }
-
-            return response; 
+            return modeltoDocumentInfo(result);
         } catch (error) {
             console.error('Error querying documents:', error);
             throw TypeError('Error getting documents');
@@ -88,12 +60,12 @@ export default class PgRepository implements IDocumentRepository {
 
     async save(documentInfo: DocumentInfo): Promise<DocumentInfo> {
         const client = await PostgreSQLDatabase.getInstance().getClient();
-        const response :DocumentInfo = {
-            code: "",
-            candidateRut: "",
-            companyRut: "",
-            url: ""
-        };
+        const checkQuery = `SELECT * FROM documents.documents WHERE code = $1;`;
+        const checkResult: QueryResult<any> = await client.query(checkQuery, [documentInfo.code]);
+
+        if (checkResult.rowCount) {
+            return modeltoDocumentInfo(checkResult);
+        }
 
         try {
             const query = `INSERT INTO documents.documents(code, candidateRut, companyRut, url) 
@@ -108,15 +80,11 @@ export default class PgRepository implements IDocumentRepository {
             ];
             
             const result: QueryResult<any> = await client.query(query, values);
-            if (result.rowCount) {
-                const response = result.rows[0];
-                return response;
-            }
-
-            return response; 
+            return modeltoDocumentInfo(result);
+            
         } catch (error) {
             console.error('Error to insert document info:', error);
-            throw TypeError('Error getting Projects');
+            throw TypeError('Error insert document info');
         } finally {
             client.release();
         }
