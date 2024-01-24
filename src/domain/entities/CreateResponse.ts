@@ -1,4 +1,4 @@
-import { Certificate } from "./GetResponse"
+import { Certificate } from "./Certificate"
 
 export interface CreateResponse {
   certificate: Certificate

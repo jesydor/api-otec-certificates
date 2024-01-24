@@ -1,7 +1,7 @@
-import { GetResponse } from "../../domain/entities/GetResponse";
+import { Certificate } from "../../domain/entities/Certificate";
 
 export interface IGetCertificateUseCase {
-  byCode(code: string): Promise<GetResponse>;
-  byCompanyRut(rut: string): Promise<GetResponse>;
-  byCandidateRut(rut: string): Promise<GetResponse>;
+  byCode(code: string): Promise<Certificate>;
+  byCompanyRut(rut: string): Promise<Certificate[]>;
+  byCandidateRut(rut: string): Promise<Certificate[]>;
 }

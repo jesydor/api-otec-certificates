@@ -6,6 +6,8 @@ import UploadCertificateUseCase from '../application/use-cases/UploadCertificate
 import PgRepository from '../infrastructure/repositories/PgRepository';
 import GoogleCloudRepository from '../infrastructure/repositories/GoogleCloudRepository';
 import CreateController from './controllers/createController';
+import GetController from './controllers/getController';
+import GetCertificateUseCase from '../application/use-cases/GetCertificateUsecase';
 
 const router = express.Router();
 
@@ -15,9 +17,17 @@ const pgRepository = new PgRepository();
 
 
 const createUseCase = new CreateCertificateUseCase(pdfGenerationService, fileStorageRepository, pgRepository);
+const uploadFileUseCase = new UploadCertificateUseCase(fileStorageRepository);
+const getUseCase = new GetCertificateUseCase(pgRepository);
 
-const uploadCertificateUseCase = new UploadCertificateUseCase(fileStorageRepository);
-const createController = new CreateController(createUseCase, uploadCertificateUseCase);
-router.get('/', createController.run);
+const createController = new CreateController(createUseCase, uploadFileUseCase);
+const getController = new GetController(getUseCase);
+
+
+router.post('/', createController.run);
+router.get('/code/:code', getController.run);
+router.get('/candidate/:candidateRut', createController.run);
+router.get('/company/:candidateRut', createController.run);
+
 
 export default router;

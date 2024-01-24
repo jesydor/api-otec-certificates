@@ -5,7 +5,7 @@ import QRCode from 'qrcode';
 import fs from 'fs';
 import httpStatus from "http-status";
 import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
-import { Certificate } from "../../domain/entities/Certificate";
+import { Certificate } from "./request/Certificate";
 
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
@@ -62,7 +62,7 @@ export default class CreateController implements AbstractController {
       const response = await this.createUseCase.pdf(data, fileName);
 
       if (response.error === '') {
-        res.status(httpStatus.OK).json(response.certificate);
+        res.status(httpStatus.CREATED).json(response.certificate);
       }
 
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json();

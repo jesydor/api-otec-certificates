@@ -6,7 +6,7 @@ import { CreateResponse } from '../../domain/entities/CreateResponse';
 import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
 import { IDocumentRepository } from '../../domain/ports/IDocumentRepository';
 import { DocumentInfo } from '../../domain/entities/DocumentInfo';
-import { Certificate } from '../../domain/entities/GetResponse';
+import { Certificate } from '../../domain/entities/Certificate';
 
 export default class CreateCertificateUseCase implements ICreateCertificateUseCase {
   private pdfGenerationService: PdfGenerationService;
@@ -23,7 +23,8 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
     const certificate :Certificate = {
         code: '',
         candidateRut: '',
-        companyRut: ''
+        companyRut: '',
+        url: ''
       };
 
     const htmlTemplate = await fs.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
@@ -48,6 +49,7 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
     certificate.code = res.code;
     certificate.candidateRut = res.candidateRut;
     certificate.companyRut = res.companyRut;
+    certificate.url = res.url;
 
     return {
       certificate,
