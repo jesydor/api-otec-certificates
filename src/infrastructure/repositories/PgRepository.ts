@@ -5,12 +5,37 @@ import { Pagination } from "../../domain/entities/Pagination";
 import { QueryResult } from 'pg';
 
 export default class PgRepository implements IDocumentRepository {
+    async getByCompanyRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
+        const client = await PostgreSQLDatabase.getInstance().getClient();
+        const response :DocumentInfo[] = [];
+        try {
+            const query = `SELECT * FROM documents.documents WHERE companyrut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
+            console.log(`SELECT * FROM documents.documents WHERE companyrut = ${rut} AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ${pagination.limit} OFFSET ${pagination.offset};`);
+            const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
+
+            result.rows.forEach(document => {
+                    response.push({
+                        code: document?.code,
+                        candidateRut: document?.candidaterut,
+                        companyRut: document?.companyrut,
+                        url: document?.url
+                    }
+                );
+            });
+            return response; 
+        } catch (error) {
+            console.error('Error querying documents by company:', error);
+            throw TypeError('Error getting documents by company');
+        } finally {
+            client.release();
+        }
+    }
     async getByCandidateRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
         const client = await PostgreSQLDatabase.getInstance().getClient();
         const response :DocumentInfo[] = [];
         try {
-            const query = `SELECT * FROM documents.documents WHERE candidaterut = '${rut}' AND deleted_at IS NULL ORDER BY created_at DESC LIMIT ${pagination.limit} OFFSET ${pagination.offset};`;
-            const result: QueryResult<any> = await client.query(query);
+            const query = `SELECT * FROM documents.documents WHERE candidateRut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
+            const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
 
             console.log(query);
             result.rows.forEach(document => {

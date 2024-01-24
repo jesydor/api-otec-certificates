@@ -6,7 +6,7 @@ import { IGetCertificateUseCase } from "../../application/ports/IGetCertificateU
 import { getPagination } from "../mappers";
 import { Pagination } from "../../domain/entities/Pagination";
 
-export default class GetByCandidateController implements AbstractController {
+export default class GetByCompanyController implements AbstractController {
   private readonly methodName = 'GetController';
   private getUseCase;
 

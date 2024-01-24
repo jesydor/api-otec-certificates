@@ -11,8 +11,8 @@ export default class GetCertificateUseCase implements IGetCertificateUseCase {
     constructor(documentsRepository: IDocumentRepository)  {
       this.documentsRepository = documentsRepository;
     }
-    byCompanyRut(rut: string): Promise<Certificate[]> {
-        throw new Error("Method not implemented.");
+    byCompanyRut(rut: string, pagination: Pagination): Promise<Certificate[]> {
+        return this.documentsRepository.getByCompanyRut(rut, pagination);
     }
     
     byCandidateRut(rut: string, pagination: Pagination): Promise<Certificate[]> {

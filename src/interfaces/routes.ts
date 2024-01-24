@@ -23,11 +23,12 @@ const getCertificateUseCase = new GetCertificateUseCase(pgRepository);
 const createController = new CreateController(createUseCase, uploadFileUseCase);
 const getByCodeController = new GetByCodeController(getCertificateUseCase);
 const getByCandidateController = new GetByCandidateController(getCertificateUseCase);
+const getByCompanyController = new GetByCandidateController(getCertificateUseCase);
 
 router.post('/', createController.run);
 router.get('/code/:code', getByCodeController.run);
 router.get('/candidate/:rut', getByCandidateController.run);
-router.get('/company/:companyRut', createController.run);
+router.get('/company/:rut', getByCompanyController.run);
 
 
 export default router;
