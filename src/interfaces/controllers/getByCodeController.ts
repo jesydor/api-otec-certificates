@@ -1,14 +1,11 @@
 import { AbstractController } from "./IController";
 import { NextFunction, Request, Response } from "express";
-import QRCode from 'qrcode';
-import fs from 'fs';
 import httpStatus from "http-status";
-import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
 
 import { IGetCertificateUseCase } from "../../application/ports/IGetCertificateUseCase";
 import { Certificate } from "../../domain/entities/Certificate";
 
-export default class GetController implements AbstractController {
+export default class GetByCodeController implements AbstractController {
   private readonly methodName = 'GetController';
   private getUseCase;
 
