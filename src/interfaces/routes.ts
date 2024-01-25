@@ -7,9 +7,9 @@ import GoogleCloudRepository from '../infrastructure/repositories/GoogleCloudRep
 import CreateController from './controllers/createController';
 import GetByCodeController from './controllers/getByCodeController';
 import GetByCandidateController from './controllers/getByCandidateController';;
-import GetCertificateUseCase from '../application/use-cases/GetCertificateUseCase';
 import UpdateController from './controllers/updateController';
 import DeleteCertificateUseCase from '../application/use-cases/DeleteCertificateUseCase';
+import GetCertificateUseCase from '../application/use-cases/GetCertificateUseCase';
 
 export default function routes(app: Application): void {
   const pdfGenerationService = new PdfGenerationService();
