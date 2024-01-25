@@ -1,6 +1,5 @@
 import { ICreateCertificateUseCase } from '../ports/ICreateCertificateUseCase';
 import PdfGenerationService from '../services/PdfGenerationService';
-import puppeteer from 'puppeteer';
 import fs from 'fs/promises';
 import { CreateResponse } from '../../domain/entities/CreateResponse';
 import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
@@ -24,7 +23,7 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
         code: '',
         candidateRut: '',
         companyRut: '',
-        url: ''
+        url: '',
       };
 
     const htmlTemplate = await fs.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
@@ -42,14 +41,14 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
       code: data.code,
       companyRut: data.companyRut,
       candidateRut: data.candidateRut,
-      url: response.url,
+      url: response.url.toString(),
     };
     
     const res = await this.documentsRepository.save(documentInfo);
     certificate.code = res.code;
     certificate.candidateRut = res.candidateRut;
     certificate.companyRut = res.companyRut;
-    certificate.url = res.url;
+    certificate.url = res.url.toString();
 
     return {
       certificate,

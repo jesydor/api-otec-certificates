@@ -5,9 +5,11 @@ import UploadCertificateUseCase from '../application/use-cases/UploadCertificate
 import PgRepository from '../infrastructure/repositories/PgRepository';
 import GoogleCloudRepository from '../infrastructure/repositories/GoogleCloudRepository';
 import CreateController from './controllers/createController';
-import GetCertificateUseCase from '../application/use-cases/GetCertificateUsecase';
 import GetByCodeController from './controllers/getByCodeController';
-import GetByCandidateController from './controllers/getByCandidateController';
+import GetByCandidateController from './controllers/getByCandidateController';;
+import GetCertificateUseCase from '../application/use-cases/GetCertificateUseCase';
+import UpdateController from './controllers/updateController';
+import DeleteCertificateUseCase from '../application/use-cases/DeleteCertificateUseCase';
 
 export default function routes(app: Application): void {
   const pdfGenerationService = new PdfGenerationService();
@@ -17,13 +19,16 @@ export default function routes(app: Application): void {
   const createUseCase = new CreateCertificateUseCase(pdfGenerationService, fileStorageRepository, pgRepository);
   const uploadFileUseCase = new UploadCertificateUseCase(fileStorageRepository);
   const getCertificateUseCase = new GetCertificateUseCase(pgRepository);
+  const deleteUseCase = new DeleteCertificateUseCase(pgRepository);
 
   const createController = new CreateController(createUseCase, uploadFileUseCase);
   const getByCodeController = new GetByCodeController(getCertificateUseCase);
   const getByCandidateController = new GetByCandidateController(getCertificateUseCase);
   const getByCompanyController = new GetByCandidateController(getCertificateUseCase);
+  const updateController = new UpdateController(deleteUseCase, createUseCase);
 
   app.post(`${process.env.BASE_PATH}/certificates`, createController.run);
+  app.put(`${process.env.BASE_PATH}/certificates/:code`, updateController.run);
   app.get(`${process.env.BASE_PATH}/certificates/:code`, getByCodeController.run);
   app.get(`${process.env.BASE_PATH}/certificates/candidate/:rut`, getByCandidateController.run);
   app.get(`${process.env.BASE_PATH}/certificates/company/:rut`, getByCompanyController.run);
