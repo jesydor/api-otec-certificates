@@ -1,7 +1,6 @@
 # Start from the node image v12
 FROM node:18.15.0
 
-RUN npm install -g npm@10.4.0
 # Change the work directory app
 WORKDIR /src
 
