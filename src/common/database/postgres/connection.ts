@@ -6,11 +6,11 @@ export class PostgreSQLDatabase {
 
   private constructor() {
     this.pool = new Pool({
-        user: process.env.PGUSER || 'otec',
-        host: process.env.PGHOST || '104.155.167.197',
-        database: process.env.PGDATABASE || 'portal-otec',
-        password: process.env.PGPASSWORD || 'sistemaotec',
-        port: parseInt(process.env.PGPORT || '5432'),
+        user: process.env.PGUSER,
+        host: process.env.PGHOST,
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD,
+        port: parseInt(process.env.PGPORT || '5432') ,
     });
   }
 
