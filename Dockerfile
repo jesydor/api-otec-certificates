@@ -8,6 +8,8 @@ WORKDIR /app
 COPY ./package.json .
 COPY ./package-lock.json .
 
+RUN npm install -g npm@10.4.0
+
 # Install dependencies
 RUN npm install
 

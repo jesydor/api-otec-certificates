@@ -10,16 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const storage_1 = require("@google-cloud/storage");
-const loggerPino_1 = require("../../resources/loggerPino");
 class GoogleCloudRepository {
     upload(certificate, fileName, bucketName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const storage = new storage_1.Storage({ keyFilename: '/Users/zae/.config/gcloud/application_default_credentials.json' });
+            const projectId = process.env.PROJECT_ID || '';
             const response = {
                 url: '',
                 error: '',
             };
             try {
+                const storageOptions = process.env.GOOGLE_APPLICATION_CREDENTIALS
+                    ? {}
+                    : { keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS };
+                const storage = new storage_1.Storage(storageOptions);
                 const bucket = storage.bucket(bucketName);
                 const archivoStream = bucket.file(fileName).createWriteStream();
                 archivoStream.end(certificate);
@@ -31,7 +34,7 @@ class GoogleCloudRepository {
             }
             catch (error) {
                 response.error = `Error uploading file: ${error} - ${fileName}`;
-                loggerPino_1.loggerPino.info(response.error);
+                console.error(response.error);
             }
             return response;
         });
