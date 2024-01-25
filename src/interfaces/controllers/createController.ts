@@ -57,7 +57,8 @@ export default class CreateController implements AbstractController {
         candidateRut: req.body.candidateRut,
         status: req.body.status,
         approveDate: req.body.approveDate,
-        qr: gifBytes.toString('base64')
+        qr: gifBytes.toString('base64'),
+        type: req.body.type
       };
 
       const errors = CertificateValidator.validate(certificate);
