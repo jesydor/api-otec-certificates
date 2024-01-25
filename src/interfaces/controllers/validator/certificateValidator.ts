@@ -1,9 +1,9 @@
-import { Certificate } from "../../../domain/entities/PdfCertificate";
+import { PdfCertificate } from "../../../domain/entities/PdfCertificate";
 
 export default class CertificateValidator {
-  static validate(data: Certificate): string[] {
+  static validate(data: PdfCertificate): string[] {
     const errors: string[] = [];
-    const requiredFields: (keyof Certificate)[] = [
+    const requiredFields: (keyof PdfCertificate)[] = [
       'code',
       'companyRut',
       'companyLegalName',

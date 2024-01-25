@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import QRCode from 'qrcode';
 import fs from 'fs';
 import httpStatus from "http-status";
-import { Certificate } from "../../domain/entities/PdfCertificate";
+import { PdfCertificate } from "../../domain/entities/PdfCertificate";
 import CertificateValidator from "./validator/certificateValidator";
 import { IDeleteCertificateUseCase } from "../../application/ports/IDeleteCertificateUseCase";
 
@@ -35,7 +35,7 @@ export default class UpdateController implements AbstractController {
     });
 
     try{
-      const certificate: Certificate = {
+      const certificate: PdfCertificate = {
         code: req.body.code,
         'sign': dorisCarrenoSignBase64,
         'logo-header': logoBase64,
@@ -59,7 +59,8 @@ export default class UpdateController implements AbstractController {
         candidateRut: req.body.candidateRut,
         status: req.body.status,
         approveDate: req.body.approveDate,
-        qr: gifBytes.toString('base64')
+        qr: gifBytes.toString('base64'),
+        type: req.body.type
       };
 
       if (code !== certificate.code) {
