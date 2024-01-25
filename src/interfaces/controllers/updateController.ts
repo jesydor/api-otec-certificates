@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import QRCode from 'qrcode';
 import fs from 'fs';
 import httpStatus from "http-status";
-import { Certificate } from "./request/Certificate";
+import { Certificate } from "../../domain/entities/PdfCertificate";
 import CertificateValidator from "./validator/certificateValidator";
 import { IDeleteCertificateUseCase } from "../../application/ports/IDeleteCertificateUseCase";
 

@@ -1,4 +1,4 @@
-import { Certificate } from "../request/Certificate";
+import { Certificate } from "../../../domain/entities/PdfCertificate";
 
 export default class CertificateValidator {
   static validate(data: Certificate): string[] {

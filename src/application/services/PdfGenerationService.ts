@@ -1,9 +1,12 @@
 import handlebars from 'handlebars';
 import fs from 'fs';
 import puppeteer from 'puppeteer';
+import { loggerPino } from '../../resources/loggerPino';
+import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 
 class PdfGenerationService {
-  async generatePdf(htmlTemplate: string, data: Object): Promise<Buffer> {
+  async generatePdf(htmlTemplate: string, data: PdfCertificate): Promise<Buffer> {
+    loggerPino.info(`generating PDF ${data}}`);
     const template = handlebars.compile(htmlTemplate);
     const html = template(data);
 

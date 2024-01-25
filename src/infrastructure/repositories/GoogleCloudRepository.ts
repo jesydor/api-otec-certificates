@@ -1,6 +1,7 @@
 import { UploadFile } from "../../domain/entities/UploadFile";
 import IFileStorageRepository from "../../domain/ports/IFileStorageRepository";
 import { Storage } from '@google-cloud/storage';
+import { loggerPino } from "../../resources/loggerPino";
 
 export default class GoogleCloudRepository implements IFileStorageRepository {
     async upload(certificate: Buffer, fileName: string, bucketName: string): Promise<UploadFile> {
@@ -11,7 +12,6 @@ export default class GoogleCloudRepository implements IFileStorageRepository {
         }
 
         try {
-            // Obtén una referencia al bucket
             const bucket = storage.bucket(bucketName);
             const archivoStream = bucket.file(fileName).createWriteStream();
             archivoStream.end(certificate);
@@ -23,10 +23,9 @@ export default class GoogleCloudRepository implements IFileStorageRepository {
           
             response.url = `https://storage.googleapis.com/${bucketName}/${fileName}`;
           } catch (error) {
-            response.error = 'Error uploading file:' + error;
-            console.error(response.error);
+            response.error = `Error uploading file: ${error} - ${fileName}`;
+            loggerPino.info(response.error);
           }
-
           return response;
     }
 }

@@ -1,5 +1,6 @@
 import { CreateResponse } from "../../domain/entities/CreateResponse";
+import { PdfCertificate } from "../../domain/entities/PdfCertificate";
 
 export interface ICreateCertificateUseCase {
-  pdf(data: Object, fileName: string): Promise<CreateResponse>; 
+  pdf(data: PdfCertificate, fileName: string): Promise<CreateResponse>; 
 }

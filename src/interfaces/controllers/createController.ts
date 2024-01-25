@@ -5,8 +5,9 @@ import QRCode from 'qrcode';
 import fs from 'fs';
 import httpStatus from "http-status";
 import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
-import { Certificate } from "./request/Certificate";
 import CertificateValidator from "./validator/certificateValidator";
+import { loggerPino } from "../../resources/loggerPino";
+import { PdfCertificate } from "../../domain/entities/PdfCertificate";
 
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
@@ -32,7 +33,7 @@ export default class CreateController implements AbstractController {
     });
 
     try{
-      const certificate: Certificate = {
+      const certificate: PdfCertificate = {
         code: req.body.code,
         'sign': dorisCarrenoSignBase64,
         'logo-header': logoBase64,
@@ -61,18 +62,22 @@ export default class CreateController implements AbstractController {
 
       const errors = CertificateValidator.validate(certificate);
       if (errors.length) {
+        loggerPino.info(`bad request ${req.body}}`);
         res.status(httpStatus.BAD_REQUEST).json(errors);
+        next();
       }
 
       const fileName = `${certificate.companyLegalName}/${certificate.candidateName.replace(/ /g,"-")}/${certificate.code}-${certificate.courseCode}-${Date.now()}.pdf`;
       const response = await this.createUseCase.pdf(certificate, fileName);
       if (response.error === '') {
         res.status(httpStatus.CREATED).json(response.certificate);
+        next();
       }
 
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json();
     } catch(error: any) {
       error.method = this.methodName;
+      loggerPino.error(`error ${error.method}}`);
       next(error);
     }
   }

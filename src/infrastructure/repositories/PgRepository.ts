@@ -4,6 +4,7 @@ import { DocumentInfo } from "../../domain/entities/DocumentInfo";
 import { Pagination } from "../../domain/entities/Pagination";
 import { QueryResult } from 'pg';
 import { modeltoDocumentInfo } from "./adapters/documentModelToDocumentInfo";
+import { loggerPino } from "../../resources/loggerPino";
 
 export default class PgRepository implements IDocumentRepository {
   async delete(code: string): Promise<boolean> {
@@ -15,7 +16,7 @@ export default class PgRepository implements IDocumentRepository {
         const isDeleted: boolean = (result.rowCount !== null && result.rowCount > 0);
         return isDeleted;
     } catch (error) {
-        console.error('Error deleting document:', error);
+      loggerPino.error(`Error deleting document: ${code} - ${error}`);
         throw new Error('Error deleting document');
     } finally {
         client.release();
@@ -35,8 +36,8 @@ export default class PgRepository implements IDocumentRepository {
       });
       return response; 
     } catch (error) {
-        console.error('Error querying documents by company:', error);
-        throw TypeError('Error getting documents by company');
+        loggerPino.error(`Error getting company documents: ${rut} - ${error}`);
+        throw TypeError('Error getting company documents by company');
     } finally {
         client.release();
     }
@@ -55,8 +56,8 @@ export default class PgRepository implements IDocumentRepository {
 
         return response; 
       } catch (error) {
-        console.error('Error querying documents:', error);
-        throw TypeError('Error getting documents');
+        loggerPino.error(`Error getting candidate documents: ${rut} - ${error}`);
+        throw TypeError('Error getting candidate documents');
       } finally {
         client.release();
       }
@@ -69,7 +70,7 @@ export default class PgRepository implements IDocumentRepository {
         const result: QueryResult<any> = await client.query(query, [code]);
         return modeltoDocumentInfo(result);
       } catch (error) {
-        console.error('Error querying documents:', error);
+        loggerPino.error(`Error getting document code: ${code} - ${error}`);
         throw TypeError('Error getting documents');
       } finally {
         client.release();
@@ -100,7 +101,7 @@ export default class PgRepository implements IDocumentRepository {
         const result: QueryResult<any> = await client.query(query, values);
         return modeltoDocumentInfo(result.rows[0]);
       } catch (error) {
-        console.error('Error to insert document info:', error);
+        loggerPino.error(`Error saving company documents: ${documentInfo.code} - ${error}`);
         throw TypeError('Error insert document info');
       } finally {
         client.release();

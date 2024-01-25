@@ -1,4 +1,4 @@
-export interface Certificate {
+export interface PdfCertificate {
     code: string;
     sign: string;
     'logo-header': string;

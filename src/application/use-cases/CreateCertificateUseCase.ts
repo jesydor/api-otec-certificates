@@ -6,6 +6,7 @@ import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
 import { IDocumentRepository } from '../../domain/ports/IDocumentRepository';
 import { DocumentInfo } from '../../domain/entities/DocumentInfo';
 import { Certificate } from '../../domain/entities/Certificate';
+import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 
 export default class CreateCertificateUseCase implements ICreateCertificateUseCase {
   private pdfGenerationService: PdfGenerationService;
@@ -18,7 +19,7 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
     this.documentsRepository = documentsRepository;
   }
 
-  async pdf(data: Certificate, fileName: string): Promise<CreateResponse> {
+  async pdf(data: PdfCertificate, fileName: string): Promise<CreateResponse> {
     const certificate :Certificate = {
         code: '',
         candidateRut: '',
