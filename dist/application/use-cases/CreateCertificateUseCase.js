@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const promises_1 = __importDefault(require("fs/promises"));
+const CertificateType_1 = require("../../domain/constants/CertificateType");
 class CreateCertificateUseCase {
     constructor(pdfGenerationService, certificateRepository, documentsRepository) {
         this.pdfGenerationService = pdfGenerationService;
@@ -21,14 +22,16 @@ class CreateCertificateUseCase {
     }
     pdf(data, fileName) {
         return __awaiter(this, void 0, void 0, function* () {
+            const bucketName = process.env.BUCKET_CERTIFICATE || 'otec-certificates';
             const certificate = {
                 code: '',
                 candidateRut: '',
                 companyRut: '',
-                url: ''
+                url: '',
             };
-            const htmlTemplate = yield promises_1.default.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
-            const bucketName = 'otec-certificates';
+            const type = data.type;
+            const template = CertificateType_1.CertificateType[type];
+            const htmlTemplate = yield promises_1.default.readFile(template, 'utf-8');
             const pdfBuffer = yield this.pdfGenerationService.generatePdf(htmlTemplate, data);
             const response = yield this.certificateRepository.upload(pdfBuffer, fileName, bucketName);
             if (response.error !== '') {
@@ -41,13 +44,13 @@ class CreateCertificateUseCase {
                 code: data.code,
                 companyRut: data.companyRut,
                 candidateRut: data.candidateRut,
-                url: response.url,
+                url: response.url.toString(),
             };
             const res = yield this.documentsRepository.save(documentInfo);
             certificate.code = res.code;
             certificate.candidateRut = res.candidateRut;
             certificate.companyRut = res.companyRut;
-            certificate.url = res.url;
+            certificate.url = res.url.toString();
             return {
                 certificate,
                 error: '',

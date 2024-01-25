@@ -5,8 +5,7 @@ class UploadCertificateUseCase {
         this.fileStorageRepository = fileStorageRepository;
     }
     upload(certificate, fileName) {
-        // TODO change by env var
-        const bucketName = 'otec-certificates';
+        const bucketName = process.env.BUCKET_CERTIFICATE || 'otec-certificates';
         return this.fileStorageRepository.upload(certificate, fileName, bucketName);
     }
 }

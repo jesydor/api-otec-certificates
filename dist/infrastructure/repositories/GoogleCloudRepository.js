@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const storage_1 = require("@google-cloud/storage");
+const loggerPino_1 = require("../../resources/loggerPino");
 class GoogleCloudRepository {
     upload(certificate, fileName, bucketName) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -19,7 +20,6 @@ class GoogleCloudRepository {
                 error: '',
             };
             try {
-                // Obtén una referencia al bucket
                 const bucket = storage.bucket(bucketName);
                 const archivoStream = bucket.file(fileName).createWriteStream();
                 archivoStream.end(certificate);
@@ -30,8 +30,8 @@ class GoogleCloudRepository {
                 response.url = `https://storage.googleapis.com/${bucketName}/${fileName}`;
             }
             catch (error) {
-                response.error = 'Error uploading file:' + error;
-                console.error(response.error);
+                response.error = `Error uploading file: ${error} - ${fileName}`;
+                loggerPino_1.loggerPino.info(response.error);
             }
             return response;
         });
