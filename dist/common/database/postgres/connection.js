@@ -14,10 +14,10 @@ const pg_1 = require("pg");
 class PostgreSQLDatabase {
     constructor() {
         this.pool = new pg_1.Pool({
-            user: process.env.PGUSER,
-            host: process.env.PGHOST,
-            database: process.env.PGDATABASE,
-            password: process.env.PGPASSWORD,
+            user: process.env.PGUSER || 'otec',
+            host: process.env.PGHOST || '104.155.167.197',
+            database: process.env.PGDATABASE || 'portal-otec',
+            password: process.env.PGPASSWORD || 'sistemaotec',
             port: parseInt(process.env.PGPORT || '5432'),
         });
     }

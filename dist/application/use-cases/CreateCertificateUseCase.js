@@ -21,13 +21,19 @@ class CreateCertificateUseCase {
     }
     pdf(data, fileName) {
         return __awaiter(this, void 0, void 0, function* () {
+            const certificate = {
+                code: '',
+                candidateRut: '',
+                companyRut: '',
+                url: ''
+            };
             const htmlTemplate = yield promises_1.default.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
             const bucketName = 'otec-certificates';
             const pdfBuffer = yield this.pdfGenerationService.generatePdf(htmlTemplate, data);
             const response = yield this.certificateRepository.upload(pdfBuffer, fileName, bucketName);
             if (response.error !== '') {
                 return {
-                    data: '',
+                    certificate,
                     error: response.error,
                 };
             }
@@ -37,10 +43,14 @@ class CreateCertificateUseCase {
                 candidateRut: data.candidateRut,
                 url: response.url,
             };
-            const res = this.documentsRepository.save(documentInfo);
+            const res = yield this.documentsRepository.save(documentInfo);
+            certificate.code = res.code;
+            certificate.candidateRut = res.candidateRut;
+            certificate.companyRut = res.companyRut;
+            certificate.url = res.url;
             return {
-                data: response.url,
-                error: response.error,
+                certificate,
+                error: '',
             };
         });
     }

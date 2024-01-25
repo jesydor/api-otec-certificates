@@ -14,7 +14,7 @@ export default class PgRepository implements IDocumentRepository {
             const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
 
             result.rows.forEach(async document => {
-                    response.push(await modeltoDocumentInfo(document));
+                response.push(await modeltoDocumentInfo(document));
             });
             return response; 
         } catch (error) {
@@ -27,12 +27,13 @@ export default class PgRepository implements IDocumentRepository {
     async getByCandidateRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
         const client = await PostgreSQLDatabase.getInstance().getClient();
         const response :DocumentInfo[] = [];
+        console.log("RUT =>", rut)
         try {
-            const query = `SELECT * FROM documents.documents WHERE candidateRut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
+            const query = `SELECT * FROM documents.documents WHERE candidaterut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
             const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
             
             result.rows.forEach(async document => {
-                    response.push(await modeltoDocumentInfo(document));
+                response.push(await modeltoDocumentInfo(document));
             });
 
             return response; 

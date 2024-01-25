@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const qrcode_1 = __importDefault(require("qrcode"));
 const fs_1 = __importDefault(require("fs"));
 const http_status_1 = __importDefault(require("http-status"));
+const certificateValidator_1 = __importDefault(require("./validator/certificateValidator"));
 class CreateController {
     constructor(createUseCase, uploadCertificateUseCase) {
         this.methodName = 'CreateController';
@@ -29,37 +30,41 @@ class CreateController {
             const gifBytes = yield qrcode_1.default.toBuffer(qrCodeUrl, {
                 errorCorrectionLevel: 'H'
             });
-            const data = {
-                code: '103871',
-                'sign': dorisCarrenoSignBase64,
-                'logo-header': logoBase64,
-                'watermark': waterMarkBase64,
-                companyRut: '59.069.860-1',
-                companyLegalName: 'ACCIONA CONSTRUCCION S.A',
-                courseName: 'TRABAJO EN ALTURA FÍSICA TEÓRICO - PRACTICO',
-                courseCode: 'CTP8-TA',
-                courseNumberHours: 8,
-                validityCourse: 4,
-                theoreticalStartDate: '09-11-2023',
-                theoreticalEndDate: '09-11-2023',
-                practicalStartDate: '30-11-2023',
-                practicalEndDate: '30-11-2023',
-                theoreticalFacilitator: 'TATIANA JORQUERA OLIVARES',
-                practicalFacilitator: 'JULIO BERNARDO GONZÁLEZ COLLAO',
-                day: 9,
-                month: 'Febrero',
-                year: 2024,
-                candidateName: 'LEONARDO ANDRES LEIVA DIAZ ',
-                candidateRut: '13.505.775-4 ',
-                status: 'Aprobado Nota:100',
-                approveDate: '25 de Agosto 2023',
-                qr: gifBytes.toString('base64')
-            };
             try {
-                const fileName = `${data.companyLegalName}/${data.candidateName.replace(/ /g, "-")}/${data.code}-${data.courseCode}-${Date.now()}.pdf`;
-                const response = yield this.createUseCase.pdf(data, fileName);
-                if (response.data !== '') {
-                    res.status(http_status_1.default.OK).json(response.data);
+                const certificate = {
+                    code: req.body.code,
+                    'sign': dorisCarrenoSignBase64,
+                    'logo-header': logoBase64,
+                    'watermark': waterMarkBase64,
+                    companyRut: req.body.companyRut,
+                    companyLegalName: req.body.companyLegalName,
+                    courseName: req.body.courseName,
+                    courseCode: req.body.courseCode,
+                    courseNumberHours: req.body.courseNumberHours,
+                    validityCourse: req.body.validityCourse,
+                    theoreticalStartDate: req.body.theoreticalStartDate,
+                    theoreticalEndDate: req.body.theoreticalEndDate,
+                    practicalStartDate: req.body.practicalStartDate,
+                    practicalEndDate: req.body.practicalEndDate,
+                    theoreticalFacilitator: req.body.theoreticalFacilitator,
+                    practicalFacilitator: req.body.practicalFacilitator,
+                    day: req.body.day,
+                    month: req.body.month,
+                    year: req.body.year,
+                    candidateName: req.body.candidateName,
+                    candidateRut: req.body.candidateRut,
+                    status: req.body.status,
+                    approveDate: req.body.approveDate,
+                    qr: gifBytes.toString('base64')
+                };
+                const errors = certificateValidator_1.default.validate(certificate);
+                if (errors.length) {
+                    res.status(http_status_1.default.BAD_REQUEST).json(errors);
+                }
+                const fileName = `${certificate.companyLegalName}/${certificate.candidateName.replace(/ /g, "-")}/${certificate.code}-${certificate.courseCode}-${Date.now()}.pdf`;
+                const response = yield this.createUseCase.pdf(certificate, fileName);
+                if (response.error === '') {
+                    res.status(http_status_1.default.CREATED).json(response.certificate);
                 }
                 res.status(http_status_1.default.INTERNAL_SERVER_ERROR).json();
             }
