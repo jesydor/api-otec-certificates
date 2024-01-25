@@ -17,14 +17,10 @@ export default class CertificateValidator {
       'practicalEndDate',
       'theoreticalFacilitator',
       'practicalFacilitator',
-      'day',
-      'month',
-      'year',
       'candidateName',
       'candidateRut',
       'status',
       'approveDate',
-      'qr'
     ];
 
     requiredFields.forEach(field => {

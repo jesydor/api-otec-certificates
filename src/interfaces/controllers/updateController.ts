@@ -19,6 +19,7 @@ export default class UpdateController implements AbstractController {
   }
 
   run = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const bucketName = process.env.BUCKET_CERTIFICATE;
     const code :string = req.params.code;
     const waterMarkPath = `${process.cwd()}/src/resources/images/solid-watermark.png`;
     const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
@@ -29,10 +30,6 @@ export default class UpdateController implements AbstractController {
     const dorisCarrenoSignPath = `${process.cwd()}/src/resources/images/doris-carreno-sign.png`;
     const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
 
-    const qrCodeUrl = 'https://portalotecjesydor.cl/Administrador/Certificados/pdf/certificados2.0.php?idcertificado=103872';
-    const gifBytes = await QRCode.toBuffer(qrCodeUrl, {
-      errorCorrectionLevel: 'H'
-    });
 
     try{
       const certificate: PdfCertificate = {
@@ -52,15 +49,13 @@ export default class UpdateController implements AbstractController {
         practicalEndDate: req.body.practicalEndDate,
         theoreticalFacilitator: req.body.theoreticalFacilitator,
         practicalFacilitator: req.body.practicalFacilitator,
-        day: req.body.day,
-        month: req.body.month,
-        year: req.body.year,
         candidateName: req.body.candidateName,
         candidateRut: req.body.candidateRut,
         status: req.body.status,
         approveDate: req.body.approveDate,
-        qr: gifBytes.toString('base64'),
-        type: req.body.type
+        qr: '',
+        type: req.body.type,
+        otecName: req.body.otecName || '',
       };
 
       if (code !== certificate.code) {
@@ -79,6 +74,12 @@ export default class UpdateController implements AbstractController {
       }
 
       const fileName = `${certificate.companyLegalName}/${certificate.candidateName.replace(/ /g,"-")}/${certificate.code}-${certificate.courseCode}-${Date.now()}.pdf`;
+      const qrCodeUrl = ` https://storage.googleapis.com/${bucketName}/${fileName}`;
+      const gifBytes = await QRCode.toBuffer(qrCodeUrl, {
+        errorCorrectionLevel: 'H'
+      });
+
+      certificate.qr = gifBytes.toString('base64');
       const response = await this.createUseCase.pdf(certificate, fileName);
       if (response.error === '') {
         res.status(httpStatus.CREATED).json(response.certificate);

@@ -15,14 +15,12 @@ export interface PdfCertificate {
     practicalEndDate: string;
     theoreticalFacilitator: string;
     practicalFacilitator: string;
-    day: number;
-    month: string;
-    year: number;
     candidateName: string;
     candidateRut: string;
     status: string;
     approveDate: string;
     qr: string;
     type: string;
+    otecName?: string;
   }
   
