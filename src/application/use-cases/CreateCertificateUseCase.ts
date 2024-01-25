@@ -7,6 +7,7 @@ import { IDocumentRepository } from '../../domain/ports/IDocumentRepository';
 import { DocumentInfo } from '../../domain/entities/DocumentInfo';
 import { Certificate } from '../../domain/entities/Certificate';
 import { PdfCertificate } from '../../domain/entities/PdfCertificate';
+import { CertificateType } from '../../domain/constants/CertificateType';
 
 export default class CreateCertificateUseCase implements ICreateCertificateUseCase {
   private pdfGenerationService: PdfGenerationService;
@@ -27,7 +28,9 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
         url: '',
       };
 
-    const htmlTemplate = await fs.readFile(__dirname + '/../../resources/templates/theoretical-practical/certificateDev.handlebars', 'utf-8');
+    const type = data.type as keyof typeof CertificateType;
+    const template :string = CertificateType[type];
+    const htmlTemplate = await fs.readFile(template, 'utf-8');
     const bucketName = 'otec-certificates';
     const pdfBuffer = await this.pdfGenerationService.generatePdf(htmlTemplate, data);
     const response = await this.certificateRepository.upload(pdfBuffer, fileName, bucketName);

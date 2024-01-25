@@ -23,5 +23,6 @@ export interface PdfCertificate {
     status: string;
     approveDate: string;
     qr: string;
+    type: string;
   }
   
