@@ -10,8 +10,7 @@ export default class UploadCertificateUseCase implements IUploadCertificateUseCa
   }
 
   upload(certificate: Buffer, fileName: string): Promise<UploadFile> {
-    // TODO change by env var
-    const bucketName = 'otec-certificates';
+    const bucketName = process.env.BUCKET_CERTIFICATE || 'otec-certificates';
     return this.fileStorageRepository.upload(certificate, fileName, bucketName);
   }
 }
