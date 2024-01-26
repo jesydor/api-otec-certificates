@@ -45,14 +45,14 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
       code: data.code,
       companyRut: data.companyRut,
       candidateRut: data.candidateRut,
-      url: response.url.toString(),
+      url: response.url,
     };
     
     const res = await this.documentsRepository.save(documentInfo);
     certificate.code = res.code;
     certificate.candidateRut = res.candidateRut;
     certificate.companyRut = res.companyRut;
-    certificate.url = res.url.toString();
+    certificate.url = res.url;
 
     return {
       certificate,

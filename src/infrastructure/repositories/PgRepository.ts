@@ -21,8 +21,7 @@ export default class PgRepository implements IDocumentRepository {
     } finally {
         client.release();
     }
-}
-
+  }
 
   async getByCompanyRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
     const client = await PostgreSQLDatabase.getInstance().getClient();
@@ -42,26 +41,27 @@ export default class PgRepository implements IDocumentRepository {
         client.release();
     }
   }
-    async getByCandidateRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
-      const client = await PostgreSQLDatabase.getInstance().getClient();
-      const response :DocumentInfo[] = [];
 
-      try {
-        const query = `SELECT * FROM documents.documents WHERE candidaterut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
-        const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
-        
-        result.rows.forEach(async document => {
-          response.push(await modeltoDocumentInfo(document));
-        });
+  async getByCandidateRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
+    const client = await PostgreSQLDatabase.getInstance().getClient();
+    const response :DocumentInfo[] = [];
 
-        return response; 
-      } catch (error) {
-        loggerPino.error(`Error getting candidate documents: ${rut} - ${error}`);
-        throw TypeError('Error getting candidate documents');
-      } finally {
-        client.release();
-      }
+    try {
+      const query = `SELECT * FROM documents.documents WHERE candidaterut = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT $2 OFFSET $3;`;
+      const result: QueryResult<any> = await client.query(query, [rut.toString(), pagination.limit, pagination.offset]);
+      
+      result.rows.forEach(async document => {
+        response.push(await modeltoDocumentInfo(document));
+      });
+
+      return response; 
+    } catch (error) {
+      loggerPino.error(`Error getting candidate documents: ${rut} - ${error}`);
+      throw TypeError('Error getting candidate documents');
+    } finally {
+      client.release();
     }
+  }
 
     async getByCode(code: string): Promise<DocumentInfo> {
       const client = await PostgreSQLDatabase.getInstance().getClient();
@@ -79,7 +79,7 @@ export default class PgRepository implements IDocumentRepository {
 
     async save(documentInfo: DocumentInfo): Promise<DocumentInfo> {
       const client = await PostgreSQLDatabase.getInstance().getClient();
-      const checkQuery = `SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;`;
+      const checkQuery = 'SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;';
       const checkResult: QueryResult<any> = await client.query(checkQuery, [documentInfo.code]);
 
       if (checkResult.rowCount) {
@@ -87,15 +87,13 @@ export default class PgRepository implements IDocumentRepository {
       }
 
       try {
-        const query = `INSERT INTO documents.documents(code, candidateRut, companyRut, url) 
-        VALUES($1, $2, $3, $4)
-        RETURNING *;`;
+        const query = 'INSERT INTO documents.documents(code, candidateRut, companyRut, url) VALUES($1, $2, $3, $4) RETURNING *;';
     
         const values = [
           documentInfo.code,
           documentInfo.candidateRut,
           documentInfo.companyRut,
-          new URL(documentInfo.url),
+          documentInfo.url.replace('"', ''),
         ];
           
         const result: QueryResult<any> = await client.query(query, values);
