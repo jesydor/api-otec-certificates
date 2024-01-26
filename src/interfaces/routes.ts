@@ -9,7 +9,7 @@ import GetByCodeController from './controllers/getByCodeController';
 import GetByCandidateController from './controllers/getByCandidateController';;
 import UpdateController from './controllers/updateController';
 import DeleteCertificateUseCase from '../application/use-cases/DeleteCertificateUseCase';
-import GetCertificateUseCase from '../application/use-cases/GetCertificateUseCase';
+import GetCertificateUseCase from '../application/use-cases/GetCertificateUsecase';
 
 export default function routes(app: Application): void {
   const pdfGenerationService = new PdfGenerationService();
