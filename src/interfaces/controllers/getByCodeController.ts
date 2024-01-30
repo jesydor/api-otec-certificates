@@ -15,7 +15,7 @@ export default class GetByCodeController implements AbstractController {
 
   run = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try{
-    const code :string = req.params.code;
+      const code :string = req.params.code;
       const response = await this.getUseCase.byCode(code);
       const certificate :Certificate = {
         code: response.code,

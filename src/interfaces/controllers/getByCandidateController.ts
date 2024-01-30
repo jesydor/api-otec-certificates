@@ -18,7 +18,7 @@ export default class GetByCandidateController implements AbstractController {
     try{
       const rut :string = req.params.rut;
       const pagination :Pagination = await getPagination(req);
-      const response = await this.getUseCase.byCompanyRut(rut, pagination);
+      const response = await this.getUseCase.byCandidateRut(rut, pagination);
 
       res.status(httpStatus.OK).json(response);
 

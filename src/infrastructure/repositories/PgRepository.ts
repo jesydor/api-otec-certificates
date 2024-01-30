@@ -63,19 +63,20 @@ export default class PgRepository implements IDocumentRepository {
     }
   }
 
-    async getByCode(code: string): Promise<DocumentInfo> {
-      const client = await PostgreSQLDatabase.getInstance().getClient();
-      try {
-        const query = `SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;`;
-        const result: QueryResult<any> = await client.query(query, [code]);
-        return modeltoDocumentInfo(result);
-      } catch (error) {
-        loggerPino.error(`Error getting document code: ${code} - ${error}`);
-        throw TypeError('Error getting documents');
-      } finally {
-        client.release();
-      }
+  async getByCode(code: string): Promise<DocumentInfo> {
+    const client = await PostgreSQLDatabase.getInstance().getClient();
+    try {
+      const query = `SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;`;
+
+      const result: QueryResult<any> = await client.query(query, [code]);
+      return modeltoDocumentInfo(result.rows[0]);
+    } catch (error) {
+      loggerPino.error(`Error getting document code: ${code} - ${error}`);
+      throw TypeError('Error getting documents');
+    } finally {
+      client.release();
     }
+  }
 
     async save(documentInfo: DocumentInfo): Promise<DocumentInfo> {
       const client = await PostgreSQLDatabase.getInstance().getClient();
@@ -88,7 +89,6 @@ export default class PgRepository implements IDocumentRepository {
 
       try {
         const query = 'INSERT INTO documents.documents(code, candidateRut, companyRut, url) VALUES($1, $2, $3, $4) RETURNING *;';
-    
         const values = [
           documentInfo.code,
           documentInfo.candidateRut,
@@ -97,7 +97,17 @@ export default class PgRepository implements IDocumentRepository {
         ];
           
         const result: QueryResult<any> = await client.query(query, values);
-        return modeltoDocumentInfo(result.rows[0]);
+        if (checkResult.rowCount) {
+          return modeltoDocumentInfo(result.rows[0]);
+        }
+
+        return {
+          code: '',
+          candidateRut: '',
+          companyRut: '',
+          url: ''
+        };
+
       } catch (error) {
         loggerPino.error(`Error saving company documents: ${documentInfo.code} - ${error}`);
         throw TypeError('Error insert document info');

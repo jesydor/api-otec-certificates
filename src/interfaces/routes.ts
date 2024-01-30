@@ -10,6 +10,7 @@ import GetByCandidateController from './controllers/getByCandidateController';;
 import UpdateController from './controllers/updateController';
 import DeleteCertificateUseCase from '../application/use-cases/DeleteCertificateUseCase';
 import GetCertificateUseCase from '../application/use-cases/GetCertificateUsecase';
+import GetByCompanyController from './controllers/getByCompanyController';
 
 export default function routes(app: Application): void {
   const pdfGenerationService = new PdfGenerationService();
@@ -24,7 +25,7 @@ export default function routes(app: Application): void {
   const createController = new CreateController(createUseCase, uploadFileUseCase);
   const getByCodeController = new GetByCodeController(getCertificateUseCase);
   const getByCandidateController = new GetByCandidateController(getCertificateUseCase);
-  const getByCompanyController = new GetByCandidateController(getCertificateUseCase);
+  const getByCompanyController = new GetByCompanyController(getCertificateUseCase);
   const updateController = new UpdateController(deleteUseCase, createUseCase);
 
   app.post(`${process.env.BASE_PATH}/certificates`, createController.run);
