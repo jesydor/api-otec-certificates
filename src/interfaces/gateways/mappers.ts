@@ -1,7 +1,8 @@
 import { Request } from 'express';
-import fs from 'fs';
 import { Pagination } from '../../domain/entities/Pagination';
 import { PdfCertificate } from '../../domain/entities/PdfCertificate';
+import fs from 'fs';
+import path from 'path'
 
 export async function getPagination(request: Request): Promise<Pagination> {
     const queryParams = request.query;
@@ -13,14 +14,13 @@ export async function getPagination(request: Request): Promise<Pagination> {
 
 
 export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
-    const nodePath = process.env.NODE_PATH || 'src';
-    const waterMarkPath = `${nodePath}/../../resources/images/solid-watermark.png`;
+    const waterMarkPath = path.join(__dirname, '../../', `resources/images/solid-watermark.png`);
     const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
 
-    const logoPath = `${nodePath}/../../resources/images/logo-header.png`;
+    const logoPath = path.join(__dirname, '../../', `resources/images/logo-header.png`);
     const logoBase64 = fs.readFileSync(logoPath).toString('base64');
 
-    const dorisCarrenoSignPath = `${nodePath}/../../resources/images/doris-carreno-sign.png`;
+    const dorisCarrenoSignPath = path.join(__dirname, '../../', `resources/images/doris-carreno-sign.png`);
     const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
 
     const certificate: PdfCertificate = {
