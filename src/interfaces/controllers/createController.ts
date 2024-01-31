@@ -7,7 +7,7 @@ import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertif
 import CertificateValidator from "./validator/certificateValidator";
 import { loggerPino } from "../../resources/loggerPino";
 import { PdfCertificate } from "../../domain/entities/PdfCertificate";
-import { reqToPdfCertificate } from "../gateways/mappers";
+import { bodyToPdfCertificate } from "../gateways/mappers";
 
 export default class CreateController implements AbstractController {
   private readonly methodName = 'CreateController';
@@ -21,7 +21,7 @@ export default class CreateController implements AbstractController {
     const bucketName = process.env.BUCKET_CERTIFICATE;
     try{
       const data = req.body;
-      const certificate : PdfCertificate = await reqToPdfCertificate(data);
+      const certificate : PdfCertificate = await bodyToPdfCertificate(data);
       const errors = CertificateValidator.validate(certificate);
       if (errors.length) {
         loggerPino.info(`bad request ${req.body}}`);

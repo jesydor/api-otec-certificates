@@ -25,6 +25,7 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
 
   async pdf(data: PdfCertificate, fileName: string): Promise<CreateResponse> {
     const bucketName = process.env.BUCKET_CERTIFICATE || 'otec-certificates';
+    const nodePath = process.env.NODE_PATH || 'src';
     const certificate :Certificate = {
         code: '',
         candidateRut: '',
@@ -33,7 +34,7 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
       };
 
     const type = data.type as keyof typeof CertificateType;
-    const template :string = path.join(__dirname, CertificateType[type]);
+    const template :string = `${process.cwd()}/${nodePath}/${CertificateType[type]}`;
     const htmlTemplate = await fs.readFile(template, 'utf-8');
     const pdfBuffer = await this.pdfGenerationService.generatePdf(htmlTemplate, data);
     const response = await this.certificateRepository.upload(pdfBuffer, fileName, bucketName);

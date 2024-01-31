@@ -7,7 +7,7 @@ import httpStatus from "http-status";
 import { PdfCertificate } from "../../domain/entities/PdfCertificate";
 import CertificateValidator from "./validator/certificateValidator";
 import { IDeleteCertificateUseCase } from "../../application/ports/IDeleteCertificateUseCase";
-import { reqToPdfCertificate } from "../gateways/mappers";
+import { bodyToPdfCertificate } from "../gateways/mappers";
 
 
 export default class UpdateController implements AbstractController {
@@ -26,7 +26,7 @@ export default class UpdateController implements AbstractController {
   
     try{
       const data = req.body;
-      const certificate : PdfCertificate = await reqToPdfCertificate(data);
+      const certificate : PdfCertificate = await bodyToPdfCertificate(data);
 
       if (code !== certificate.code) {
         res.status(httpStatus.BAD_REQUEST).json(`The code ${code} does not match with ${certificate.code}`);
