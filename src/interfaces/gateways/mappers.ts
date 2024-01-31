@@ -14,13 +14,13 @@ export async function getPagination(request: Request): Promise<Pagination> {
 
 export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
     const nodePath = process.env.NODE_PATH || 'src';
-    const waterMarkPath = `${nodePath}/resources/images/solid-watermark.png`;
+    const waterMarkPath = `${nodePath}/../../resources/images/solid-watermark.png`;
     const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
 
-    const logoPath = `${nodePath}/resources/images/logo-header.png`;
+    const logoPath = `${nodePath}/../../resources/images/logo-header.png`;
     const logoBase64 = fs.readFileSync(logoPath).toString('base64');
 
-    const dorisCarrenoSignPath = `${nodePath}/resources/images/doris-carreno-sign.png`;
+    const dorisCarrenoSignPath = `${nodePath}/../../resources/images/doris-carreno-sign.png`;
     const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
 
     const certificate: PdfCertificate = {
