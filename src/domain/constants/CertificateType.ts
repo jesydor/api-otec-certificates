@@ -1,5 +1,5 @@
 export const CertificateType = {
-    'THEORETICAL': `${__dirname}/../../resources/templates/theoretical/certificate.handlebars`,
-    'PRACTICAL': `${__dirname}/../../resources/templates/practical/certificate.handlebars`,
-    'THEORETICAL-PRACTICAL': `${__dirname}/../../resources/templates/theoretical-practical/certificate.handlebars`,
+    'THEORETICAL': `../../resources/templates/theoretical/certificate.handlebars`,
+    'PRACTICAL': `../../resources/templates/practical/certificate.handlebars`,
+    'THEORETICAL-PRACTICAL': `../../resources/templates/theoretical-practical/certificate.handlebars`,
 };

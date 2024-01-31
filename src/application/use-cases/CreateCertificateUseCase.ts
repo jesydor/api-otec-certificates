@@ -1,6 +1,7 @@
 import { ICreateCertificateUseCase } from '../ports/ICreateCertificateUseCase';
 import PdfGenerationService from '../services/PdfGenerationService';
 import fs from 'fs/promises';
+import path from 'path';
 import { CreateResponse } from '../../domain/entities/CreateResponse';
 import IFileStorageRepository from '../../domain/ports/IFileStorageRepository';
 import { IDocumentRepository } from '../../domain/ports/IDocumentRepository';
@@ -8,6 +9,8 @@ import { DocumentInfo } from '../../domain/entities/DocumentInfo';
 import { Certificate } from '../../domain/entities/Certificate';
 import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 import { CertificateType } from '../../domain/constants/CertificateType';
+
+
 
 export default class CreateCertificateUseCase implements ICreateCertificateUseCase {
   private pdfGenerationService: PdfGenerationService;
@@ -30,7 +33,7 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
       };
 
     const type = data.type as keyof typeof CertificateType;
-    const template :string = CertificateType[type];
+    const template :string = path.join(__dirname, CertificateType[type]);
     const htmlTemplate = await fs.readFile(template, 'utf-8');
     const pdfBuffer = await this.pdfGenerationService.generatePdf(htmlTemplate, data);
     const response = await this.certificateRepository.upload(pdfBuffer, fileName, bucketName);

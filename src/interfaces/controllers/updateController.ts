@@ -7,6 +7,8 @@ import httpStatus from "http-status";
 import { PdfCertificate } from "../../domain/entities/PdfCertificate";
 import CertificateValidator from "./validator/certificateValidator";
 import { IDeleteCertificateUseCase } from "../../application/ports/IDeleteCertificateUseCase";
+import { reqToPdfCertificate } from "../gateways/mappers";
+
 
 export default class UpdateController implements AbstractController {
   private readonly methodName = 'CreateController';
@@ -21,56 +23,26 @@ export default class UpdateController implements AbstractController {
   run = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const bucketName = process.env.BUCKET_CERTIFICATE;
     const code :string = req.params.code;
-    const waterMarkPath = `${process.cwd()}/src/resources/images/solid-watermark.png`;
-    const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
-
-    const logoPath = `${process.cwd()}/src/resources/images/logo-header.png`;
-    const logoBase64 = fs.readFileSync(logoPath).toString('base64');
-
-    const dorisCarrenoSignPath = `${process.cwd()}/src/resources/images/doris-carreno-sign.png`;
-    const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
-
-
+  
     try{
-      const certificate: PdfCertificate = {
-        code: req.body.code,
-        'sign': dorisCarrenoSignBase64,
-        'logo-header': logoBase64,
-        'watermark': waterMarkBase64,
-        companyRut: req.body.companyRut,
-        companyLegalName: req.body.companyLegalName,
-        courseName: req.body.courseName,
-        courseCode: req.body.courseCode,
-        courseNumberHours: req.body.courseNumberHours,
-        validityCourse: req.body.validityCourse,
-        theoreticalStartDate: req.body.theoreticalStartDate,
-        theoreticalEndDate: req.body.theoreticalEndDate,
-        practicalStartDate: req.body.practicalStartDate,
-        practicalEndDate: req.body.practicalEndDate,
-        theoreticalFacilitator: req.body.theoreticalFacilitator,
-        practicalFacilitator: req.body.practicalFacilitator,
-        candidateName: req.body.candidateName,
-        candidateRut: req.body.candidateRut,
-        status: req.body.status,
-        approveDate: req.body.approveDate,
-        qr: '',
-        type: req.body.type,
-        otecName: req.body.otecName || '',
-      };
+      const data = req.body;
+      const certificate : PdfCertificate = await reqToPdfCertificate(data);
 
       if (code !== certificate.code) {
         res.status(httpStatus.BAD_REQUEST).json(`The code ${code} does not match with ${certificate.code}`);
+        return;
       }
 
       const errors = CertificateValidator.validate(certificate);
       if (errors.length) {
         res.status(httpStatus.BAD_REQUEST).json(errors);
+        return;
       }
       
       const isDeleted = await this.deleteUseCase.run(code);
       if(!isDeleted) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json(`Can't update certificate ${code}`);
-        next();
+        return;
       }
 
       const fileName = `${certificate.companyLegalName}/${certificate.candidateName.replace(/ /g,"-")}/${certificate.code}-${certificate.courseCode}-${Date.now()}.pdf`;
@@ -83,8 +55,10 @@ export default class UpdateController implements AbstractController {
       const response = await this.createUseCase.pdf(certificate, fileName);
       if (response.error === '') {
         res.status(httpStatus.CREATED).json(response.certificate);
+        return;
       } else {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json();
+        next();
       }
     } catch(error: any) {
       error.method = this.methodName;

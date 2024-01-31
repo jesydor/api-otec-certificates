@@ -97,7 +97,7 @@ export default class PgRepository implements IDocumentRepository {
         ];
           
         const result: QueryResult<any> = await client.query(query, values);
-        if (checkResult.rowCount) {
+        if (result.rowCount) {
           return modeltoDocumentInfo(result.rows[0]);
         }
 
