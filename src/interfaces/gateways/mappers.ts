@@ -3,6 +3,8 @@ import { Pagination } from '../../domain/entities/Pagination';
 import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 import fs from 'fs';
 import path from 'path'
+import { loggerPino } from '../../resources/loggerPino';
+import s from 'shelljs';
 
 export async function getPagination(request: Request): Promise<Pagination> {
     const queryParams = request.query;
@@ -14,7 +16,8 @@ export async function getPagination(request: Request): Promise<Pagination> {
 
 
 export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
-    const waterMarkPath = path.join(__dirname, '../../', `resources/images/solid-watermark.png`);
+   loggerPino.info(s.ls());
+    const waterMarkPath = path.join('dist', '../../', `resources/images/solid-watermark.png`);
     const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
     console.log('WATERMARK =>', waterMarkPath);
 
