@@ -11,12 +11,12 @@
         "node_modules/@types"
       ]
     },
-  "include": [
-    "typings.d.ts",
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "include": [
+      "typings.d.ts",
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
   }
   

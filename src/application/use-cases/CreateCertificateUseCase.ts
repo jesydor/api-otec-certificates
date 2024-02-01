@@ -34,6 +34,8 @@ export default class CreateCertificateUseCase implements ICreateCertificateUseCa
 
     const type = data.type as keyof typeof CertificateType;
     const template :string = path.join(__dirname, '../../', CertificateType[type]);
+    console.log('TEMPLATE =>', template);
+
     const htmlTemplate = await fs.readFile(template, 'utf-8');
     const pdfBuffer = await this.pdfGenerationService.generatePdf(htmlTemplate, data);
     const response = await this.certificateRepository.upload(pdfBuffer, fileName, bucketName);
