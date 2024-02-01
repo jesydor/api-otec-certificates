@@ -3,6 +3,7 @@ import { Pagination } from '../../domain/entities/Pagination';
 import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 import fs from 'fs';
 import path from 'path'
+import s from 'shelljs';
 
 export async function getPagination(request: Request): Promise<Pagination> {
     const queryParams = request.query;
@@ -12,8 +13,8 @@ export async function getPagination(request: Request): Promise<Pagination> {
     return { limit, offset }
 }
 
-
 export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
+    console.log(s.ls());
     const waterMarkPath = path.join(__dirname, '../../', `resources/images/solid-watermark.png`);
     const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
     console.log('WATERMARK =>', waterMarkPath);
@@ -26,7 +27,6 @@ export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
     const dorisCarrenoSignPath = path.join(__dirname, '../../', `resources/images/doris-carreno-sign.png`);
     const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
     console.log('SIGN =>', dorisCarrenoSignPath);
-
 
     const certificate: PdfCertificate = {
         code: data.code,
