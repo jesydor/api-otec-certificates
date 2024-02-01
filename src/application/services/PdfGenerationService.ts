@@ -1,7 +1,7 @@
 import handlebars from 'handlebars';
 import fs from 'fs';
 import puppeteer from 'puppeteer';
-import { loggerPino } from '../../resources/loggerPino';
+import { loggerPino } from '../../../resources/loggerPino';
 import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 
 class PdfGenerationService {

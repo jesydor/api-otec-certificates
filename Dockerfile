@@ -2,7 +2,7 @@
 FROM node:18.15.0
 
 # Change the work directory app
-WORKDIR /app
+WORKDIR /src
 
 # Copy the package dependencies
 COPY ./package.json .

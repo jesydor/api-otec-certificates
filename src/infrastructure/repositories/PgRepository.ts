@@ -4,7 +4,7 @@ import { DocumentInfo } from "../../domain/entities/DocumentInfo";
 import { Pagination } from "../../domain/entities/Pagination";
 import { QueryResult } from 'pg';
 import { modeltoDocumentInfo } from "./adapters/documentModelToDocumentInfo";
-import { loggerPino } from "../../resources/loggerPino";
+import { loggerPino } from "../../../resources/loggerPino";
 
 export default class PgRepository implements IDocumentRepository {
   async delete(code: string): Promise<boolean> {

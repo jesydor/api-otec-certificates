@@ -4,7 +4,7 @@ import path from 'path';
 import http from 'http';
 import os from 'os';
 import cookieParser from 'cookie-parser';
-import { loggerPino } from '../../resources/loggerPino';
+import { loggerPino } from '../../../resources/loggerPino';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 

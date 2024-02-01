@@ -5,7 +5,7 @@ import QRCode from 'qrcode';
 import httpStatus from "http-status";
 import { IUploadCertificateUseCase } from "../../application/ports/IUploadCertificateUseCase";
 import CertificateValidator from "./validator/certificateValidator";
-import { loggerPino } from "../../resources/loggerPino";
+import { loggerPino } from "../../../resources/loggerPino";
 import { PdfCertificate } from "../../domain/entities/PdfCertificate";
 import { bodyToPdfCertificate } from "../gateways/mappers";
 
