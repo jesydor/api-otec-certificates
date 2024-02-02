@@ -1,24 +1,20 @@
-# Start from the node image v12
-FROM node:18.15.0
+# Utiliza la imagen de Puppeteer, que ya incluye Chrome
+FROM buildkite/puppeteer:18.0.0
 
-# Change the work directory app
+# Establece el directorio de trabajo en /src
 WORKDIR /src
 
-# Copy the package dependencies
-COPY ./package.json .
-COPY ./package-lock.json .
-
-# Install dependencies
-RUN npm install
-
-# Copy the directory
+# Copia los archivos de la aplicación
 COPY . .
 
-# Compile files in the dist folder
+# Instala las dependencias
+RUN npm install
+
+# Compila los archivos en la carpeta dist
 RUN npm run compile
 
-# Expose the port 3000
+# Expone el puerto 3000
 EXPOSE 3000
 
-# Run the server
-CMD ["npm","run","start"]
+# Ejecuta el servidor
+CMD ["npm", "run", "start"]
