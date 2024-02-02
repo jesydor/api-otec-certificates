@@ -8,8 +8,8 @@ s.rm('-rf', outDir);
 // Crea el directorio de salida
 s.mkdir(outDir);
 
-// Copia los archivos y directorios desde src/resources a dist/resources
-s.cp('-r', 'src/resources/*', `${outDir}/resources/`);
+// Utiliza rsync para copiar recursivamente los archivos y directorios desde src/resources a dist/resources
+s.exec(`rsync -a src/resources/. ${outDir}/resources/`);
 
 // Copia el archivo .env al directorio de salida
 s.cp('.env', `${outDir}/.env`);
