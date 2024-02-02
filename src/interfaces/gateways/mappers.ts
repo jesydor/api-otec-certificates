@@ -16,7 +16,7 @@ export async function getPagination(request: Request): Promise<Pagination> {
 
 export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
     const waterMarkPath = path.join(__dirname, '../../', `resources/images/solid-watermark.png`);
-    console.log('/src', s.ls('/src'));
+    console.log('/src/src', s.ls('/src/src'));
     console.log(waterMarkPath, s.ls(path.join(__dirname, '../../', `resources/images/`)));
 
 
