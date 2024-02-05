@@ -13,7 +13,7 @@ class PdfGenerationService {
     const browser = await puppeteer.launch({ 
       executablePath: '/usr/bin/chromium', // Ruta del ejecutable de Chrome
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      headless: true,
+      headless: "new",
     });
     const page = await browser.newPage();
 
