@@ -16,23 +16,13 @@ export async function getPagination(request: Request): Promise<Pagination> {
 
 export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
     const waterMarkPath = path.join(__dirname, '../../', `resources/images/solid-watermark.png`);
-    console.log('/src/dist', s.ls('/src/dist'));
-    console.log('/src/dist/resources/', s.ls('/src/dist/resources/'));
-    console.log('/src/dist/resources/images', s.ls('/src/dist/resources/images'));
-    console.log(waterMarkPath, s.ls(path.join(__dirname, '../../', `resources/images/`)));
-
     const waterMarkBase64 = fs.readFileSync(waterMarkPath).toString('base64');
-    console.log('WATERMARK =>', waterMarkPath);
 
     const logoPath = path.join(__dirname, '../../', `resources/images/logo-header.png`);
     const logoBase64 = fs.readFileSync(logoPath).toString('base64');
-    console.log('LOGO =>', logoPath);
 
-    
     const dorisCarrenoSignPath = path.join(__dirname, '../../', `resources/images/doris-carreno-sign.png`);
     const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
-    console.log('SIGN =>', dorisCarrenoSignPath);
-
 
     const certificate: PdfCertificate = {
         code: data.code,
@@ -59,7 +49,6 @@ export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
         type: data.type,
         otecName: data.otecName || '',
       };
-
 
       return certificate;
 }
