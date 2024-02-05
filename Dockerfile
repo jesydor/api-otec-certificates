@@ -27,6 +27,7 @@ COPY ./package-lock.json .
 
 # Install npm dependencies
 RUN npm install
+RUN npx puppeteer browsers install chrome
 
 # Copy the rest of the application
 COPY . .
