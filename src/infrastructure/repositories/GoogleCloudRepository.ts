@@ -17,8 +17,7 @@ export default class GoogleCloudRepository implements IFileStorageRepository {
             ? { keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS }
             : {}
             
-            // const storage = new Storage(storageOptions);
-            const storage = new Storage();
+            const storage = new Storage(storageOptions);
             const bucket = storage.bucket(bucketName);
             const archivoStream = bucket.file(fileName).createWriteStream();
             archivoStream.end(certificate);
