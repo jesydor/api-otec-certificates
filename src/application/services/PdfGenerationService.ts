@@ -10,7 +10,11 @@ class PdfGenerationService {
     const template = handlebars.compile(htmlTemplate);
     const html = template(data);
 
-    const browser = await puppeteer.launch({ headless: "new", args: ['--enable-local-file-accesses', '--no-sandbox'] });
+    const browser = await puppeteer.launch({ 
+      executablePath: '/usr/bin/chromium-browser', // Ruta del ejecutable de Chrome
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      headless: true,
+    });
     const page = await browser.newPage();
 
     await page.setContent(html);
