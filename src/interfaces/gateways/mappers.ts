@@ -48,6 +48,7 @@ export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
         qr: '',
         type: data.type,
         otecName: data.otecName || '',
+        courseContent: data?.courseContent
       };
 
       return certificate;

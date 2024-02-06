@@ -9,7 +9,6 @@
             flex-wrap: wrap;
             padding: 10px;
         }
-
         .horizontal-container{
             display: flex;
             flex-wrap: wrap;
@@ -18,7 +17,6 @@
             padding: 10px;
             border: 0px solid;
         }
-
         .container .central{
             flex: 2;
             justify-content: center;
@@ -28,7 +26,6 @@
             margin-top: 30px;
             border: 0px solid black;
         }
-
         .container .right {
             width: 220px; /* Ajusta el ancho según sea necesario */
             text-align: left;
@@ -36,7 +33,6 @@
             font-size: 18px; /* Ajusta el tamaño del texto */
             border: 0px solid black;
         }
-
         .horizontal-container .title {
             text-align: center;
             line-height: 75px;
@@ -44,11 +40,9 @@
             font-weight: bold;
             margin-top: -50px;
         }
-
         .horizontal-container .certifier {
             font-size: 18px;
         }
-
         .certifier .company {
             flex: 2;
             width: 100%;
@@ -57,27 +51,22 @@
             text-align: left;
             border-collapse: collapse;
         }
-
         .company table, .company th, .company td {
             border: 1px solid; /* Borde normal */
             padding: 3px;
         }
-
         .course-info {
             margin-left: 90px;;
             font-size: 15px;
             line-height: normal; /* Añade esta línea */
         }
-
         .course-info table {
             margin-top: 10px;
             width: 100%;
         }
-
         .course-info .title-info {
             font-weight: bold; /* Hace que el texto en las celdas de encabezado sea negrita */
         }
-
         .certifier .candidate {
             width: 100%;
             font-size: 15px;
@@ -85,27 +74,22 @@
             text-align: left;
             border-collapse: collapse;
         }
-
         .candidate table, .candidate th, .candidate td {
             border: 1px solid; /* Borde normal */
             padding: 4px;
         }
-
         .certified {
             margin-left: 90px;
             margin-right: 90px;;
             font-size: 15px;
             line-height: normal; /* Añade esta línea */
         }
-        
         .certified p {
             text-align: justify;
         }
-
         .certified p {
             text-align: justify;
         }
-
         .validation {
             display: flex;
             flex-wrap: wrap;
@@ -115,11 +99,9 @@
             padding: 10px;
             border: 0px solid;
         }
-
         .sign {
             margin-top: 70px;
         }
-
         body {
             margin: 0;
             padding: 0;
@@ -133,19 +115,27 @@
             height: 57vh; /* Altura al 100% del viewport */
             z-index: -1; /* Coloca la imagen detrás del contenido */
         }
-
         .qr-code-container {
             position: fixed;
             bottom: 0;
             right: 0;
             margin-bottom: 10px;
         }
-
         .qr-code {
             width: 70%; /* Ajusta el tamaño según sea necesario */
             height: auto; /* Para mantener la proporción original */
         }
-
+        .page-break {
+            page-break-before: always;
+        }
+        .course-content table {
+            width: 60%; /* Establece el ancho de la tabla al 60% de la página */
+            margin: 0 auto; /* Centra la tabla horizontalmente */
+        }
+        .course-content th, .course-content td {
+            border: 1px solid; /* Borde normal */
+            padding: 3px;
+        }
     </style>
 </head>
 <body>
@@ -274,6 +264,36 @@
     <div class="qr-code-container">
         <img class="qr-code" src="data:image/png;base64,{{ qr }}" alt="Código QR">
     </div>
-
+    {{#if courseContent}}
+    <div class="page-break">
+        <img src="data:image/png;base64,{{ watermark }}" class="background-img" alt="Background Image">
+        <div class="container">
+            <div class="central">
+                <img src="data:image/png;base64,{{ logo-header }}">
+            </div>
+            <div class="right">
+                Serie: OTEC JD-0{{ code }}
+            </div>
+        </div>
+        <div class="horizontal-container">
+            <div class="certifier">
+                Contenido del Curso:
+                <table class="course-content">
+                    <tbody>
+                        <tr>
+                            <td>Contenido del curso</td>
+                            <td align="justify">{{formatText courseContent}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="validation">
+            <div class="sign">
+                <img src="data:image/png;base64,{{ sign }}">
+            </div>
+        </div>
+    </div>
+    {{/if}}
 </body>
 </html>

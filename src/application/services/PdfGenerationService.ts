@@ -7,6 +7,11 @@ import { PdfCertificate } from '../../domain/entities/PdfCertificate';
 class PdfGenerationService {
   async generatePdf(htmlTemplate: string, data: PdfCertificate): Promise<Buffer> {
     loggerPino.info(`generating PDF ${data.code}`);
+    handlebars.registerHelper('formatText', function(text) {
+      if (!text) return text;
+        return new handlebars.SafeString(text.replace(/\n/g, '<br>'));
+    });
+
     const template = handlebars.compile(htmlTemplate);
     const html = template(data);
 

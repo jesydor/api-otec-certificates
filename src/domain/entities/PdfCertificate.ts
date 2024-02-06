@@ -22,5 +22,6 @@ export interface PdfCertificate {
     qr: string;
     type: string;
     otecName?: string;
+    courseContent?: string;
   }
   
