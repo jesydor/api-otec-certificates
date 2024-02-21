@@ -78,41 +78,51 @@ export default class PgRepository implements IDocumentRepository {
     }
   }
 
-    async save(documentInfo: DocumentInfo): Promise<DocumentInfo> {
-      const client = await PostgreSQLDatabase.getInstance().getClient();
-      const checkQuery = 'SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;';
-      const checkResult: QueryResult<any> = await client.query(checkQuery, [documentInfo.code]);
-
-      if (checkResult.rowCount) {
-        return modeltoDocumentInfo(checkResult.rows[0]);
+  async save(documentInfo: DocumentInfo): Promise<DocumentInfo> {
+    const client = await PostgreSQLDatabase.getInstance().getClient();
+    try {
+      const query = 'INSERT INTO documents.documents(code, candidateRut, companyRut, url) VALUES($1, $2, $3, $4) RETURNING *;';
+      const values = [
+        documentInfo.code,
+        documentInfo.candidateRut,
+        documentInfo.companyRut,
+        documentInfo.url.replace('"', ''),
+      ];
+        
+      const result: QueryResult<any> = await client.query(query, values);
+      if (result.rowCount) {
+        return modeltoDocumentInfo(result.rows[0]);
       }
 
-      try {
-        const query = 'INSERT INTO documents.documents(code, candidateRut, companyRut, url) VALUES($1, $2, $3, $4) RETURNING *;';
-        const values = [
-          documentInfo.code,
-          documentInfo.candidateRut,
-          documentInfo.companyRut,
-          documentInfo.url.replace('"', ''),
-        ];
-          
-        const result: QueryResult<any> = await client.query(query, values);
-        if (result.rowCount) {
-          return modeltoDocumentInfo(result.rows[0]);
-        }
+      return {
+        code: '',
+        candidateRut: '',
+        companyRut: '',
+        url: ''
+      };
 
-        return {
-          code: '',
-          candidateRut: '',
-          companyRut: '',
-          url: ''
-        };
-
-      } catch (error) {
-        loggerPino.error(`Error saving company documents: ${documentInfo.code} - ${error}`);
-        throw TypeError('Error insert document info');
-      } finally {
-        client.release();
-      }
+    } catch (error) {
+      loggerPino.error(`Error saving company documents: ${documentInfo.code} - ${error}`);
+      throw TypeError('Error insert document info');
+    } finally {
+      client.release();
     }
+  }
+
+  async getByCodes(codes: string[]): Promise<DocumentInfo[]> {
+    const client = await PostgreSQLDatabase.getInstance().getClient();
+    try {
+      const query = `SELECT * FROM documents.documents WHERE code IN (${codes.map((_, index) => `$${index + 1}`).join(', ')}) AND deleted_at IS NULL;`;
+      const result: QueryResult<any> = await client.query(query, codes);
+      const documentPromises = result.rows.map(async (document: any) => {
+          return await modeltoDocumentInfo(document);
+      });
+      return Promise.all(documentPromises) as Promise<DocumentInfo[]>;
+    } catch (error) {
+      loggerPino.error(`Error getting documents codes: ${codes.join(', ')} - ${error}`);
+      throw new Error('Error getting documents');
+    } finally {
+      client.release();
+    }
+  }
 }

@@ -22,7 +22,7 @@ export default function routes(app: Application): void {
   const getCertificateUseCase = new GetCertificateUseCase(pgRepository);
   const deleteUseCase = new DeleteCertificateUseCase(pgRepository);
 
-  const createController = new CreateController(createUseCase, uploadFileUseCase);
+  const createController = new CreateController(createUseCase, getCertificateUseCase);
   const getByCodeController = new GetByCodeController(getCertificateUseCase);
   const getByCandidateController = new GetByCandidateController(getCertificateUseCase);
   const getByCompanyController = new GetByCompanyController(getCertificateUseCase);
