@@ -11,6 +11,7 @@ export default class GetCertificateUseCase implements IGetCertificateUseCase {
     constructor(documentsRepository: IDocumentRepository)  {
       this.documentsRepository = documentsRepository;
     }
+
     byCompanyRut(rut: string, pagination: Pagination): Promise<Certificate[]> {
         return this.documentsRepository.getByCompanyRut(rut, pagination);
     }
@@ -21,6 +22,10 @@ export default class GetCertificateUseCase implements IGetCertificateUseCase {
 
     async byCode(code: string): Promise<DocumentInfo> {
         return this.documentsRepository.getByCode(code);
+    }
+
+    async byCodes(codes: string[]): Promise<DocumentInfo[]> {
+        return this.documentsRepository.getByCodes(codes);
     }
 
 }
