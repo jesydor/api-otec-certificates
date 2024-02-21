@@ -80,13 +80,6 @@ export default class PgRepository implements IDocumentRepository {
 
   async save(documentInfo: DocumentInfo): Promise<DocumentInfo> {
     const client = await PostgreSQLDatabase.getInstance().getClient();
-    const checkQuery = 'SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NULL;';
-    const checkResult: QueryResult<any> = await client.query(checkQuery, [documentInfo.code]);
-
-    if (checkResult.rowCount) {
-      return modeltoDocumentInfo(checkResult.rows[0]);
-    }
-
     try {
       const query = 'INSERT INTO documents.documents(code, candidateRut, companyRut, url) VALUES($1, $2, $3, $4) RETURNING *;';
       const values = [
