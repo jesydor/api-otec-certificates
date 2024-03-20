@@ -14,13 +14,19 @@ export default class PgRepository implements IDocumentRepository {
         const result: QueryResult<any> = await client.query(query, [code]);
 
         const isDeleted: boolean = (result.rowCount !== null && result.rowCount > 0);
+        if (!isDeleted) {
+            const deletedQuery = `SELECT * FROM documents.documents WHERE code = $1 AND deleted_at IS NOT NULL;`;
+            const deletedResult: QueryResult<any> = await client.query(deletedQuery, [code]);
+            return deletedResult.rowCount !== 0;
+        }
+
         return isDeleted;
-    } catch (error) {
-      loggerPino.error(`Error deleting document: ${code} - ${error}`);
-        throw new Error('Error deleting document');
-    } finally {
-        client.release();
-    }
+      } catch (error) {
+          loggerPino.error(`Error deleting document: ${code} - ${error}`);
+          throw new Error('Error deleting document');
+      } finally {
+          client.release();
+      }
   }
 
   async getByCompanyRut(rut: string, pagination: Pagination): Promise<DocumentInfo[]> {
