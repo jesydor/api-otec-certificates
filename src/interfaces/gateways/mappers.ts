@@ -74,7 +74,7 @@ export async function bodyToPdfCertificate(data: any): Promise<PdfCertificate> {
     const dorisCarrenoSignBase64 = fs.readFileSync(dorisCarrenoSignPath).toString('base64');
 
     const certificate: PdfCertificate = {
-        code: data.code,
+        code: data.code as string,
         'sign': dorisCarrenoSignBase64,
         'logo-header': logoBase64,
         'watermark': waterMarkBase64,
