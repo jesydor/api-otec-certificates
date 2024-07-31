@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y chromium
 
 # Install puppeteer
 RUN npm install puppeteer@latest
-RUN npx puppeteer browsers install chrome
 
 # Copy the package dependencies
 COPY ./package.json .
