@@ -11,14 +11,11 @@ RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable 
 RUN apt-get update && apt-get install -y chromium
 
 # Install puppeteer
-RUN npm install puppeteer@latest
+RUN npx puppeteer@latest install
 
 # Copy the package dependencies
 COPY ./package.json .
 COPY ./package-lock.json .
-
-# Set environment variable
-ENV PUPPETEER_SKIP_DOWNLOAD=true
 
 # Install dependencies
 RUN npm install
