@@ -1,5 +1,5 @@
 # Start from the node image v12
-FROM node:18.15.0
+FROM node:latest
 
 # Change the work directory app
 WORKDIR /src
@@ -11,11 +11,14 @@ RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable 
 RUN apt-get update && apt-get install -y chromium
 
 # Install puppeteer
-RUN npx puppeteer@22.0.0 install
+RUN npm install puppeteer@latest
 
 # Copy the package dependencies
 COPY ./package.json .
 COPY ./package-lock.json .
+
+# Set environment variable
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 
 # Install dependencies
 RUN npm install
